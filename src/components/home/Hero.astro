@@ -1,0 +1,46 @@
+<style>
+  .vercel-bg {
+    position: relative;
+    background-color: #ffffff;
+    overflow: hidden;
+  }
+
+  .vercel-bg::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+
+    /* bolinhas */
+    background-image: radial-gradient(rgb(0, 0, 0) 1px, transparent 1px);
+    background-size: 24px 24px;
+    z-index: 0;
+  }
+
+  .vercel-bg::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    /* fade nas bordas */
+    background: radial-gradient(ellipse at center, transparent 40%, #4242a531);
+    z-index: 1;
+  }
+</style>
+<section class="vercel-bg w-full h-screen
+p-8 sm:12 md:16 lg:p-20 xl:">
+  <div class="w-full h-full flex flex-col gap-4">
+    <h1
+      class="text-base sm:text-sm md: lg:text-9xl xl: bg-gradient-to-r
+           from-[#1a1affe5]
+           via-[#aaa0ff]
+           to-gray-300
+           bg-clip-text
+           text-transparent"
+    >
+      Idiomas para sua carreira
+    </h1>
+    <p class="text-[#4242A5E5] text-base sm: md: lg:text-2xl xl:">
+      Cursos imersivos e personalizados para crianças, adolescentes e
+      profissionais.
+    </p>
+  </div>
+</section>
