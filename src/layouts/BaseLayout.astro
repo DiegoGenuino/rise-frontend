@@ -1,5 +1,6 @@
 ---
 const { title = "RISE Idiomas", description = "Aprenda inglês de forma estratégica." } = Astro.props;
+import "@fontsource/fjalla-one/400.css"; // Regular weight
 import "../styles/global.css";
 ---
 
@@ -11,7 +12,7 @@ import "../styles/global.css";
     <title>{title}</title>
     <meta name="description" content={description} />
   </head>
-  <body class="bg-white text-gray-900 antialiased">
+  <body class="bg-red-600 font-sans">
     <slot />
   </body>
 </html>
