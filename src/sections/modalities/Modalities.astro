@@ -1,0 +1,644 @@
+---
+import { Image } from "astro:assets";
+
+import ExecutivoImage from "../../assets/images/modalities-section/executivo-image.png";
+import AcademicoImage from "../../assets/images/modalities-section/academico-image.png";
+import JuridicoImage from "../../assets/images/modalities-section/juridico-image.png";
+import PreparatorioImage from "../../assets/images/modalities-section/preparatorio-image.png";
+import TeensImage from "../../assets/images/modalities-section/teens-image.png";
+
+// Kids section images
+import kidExpr1 from "../../assets/images/modalities-section/kid-expression-1.png";
+import kidExpr2 from "../../assets/images/modalities-section/kid-expression-2.png";
+import kidExpr3 from "../../assets/images/modalities-section/kid-expression-3.png";
+import kidExpr4 from "../../assets/images/modalities-section/kid-expression-4.png";
+import kidExpr5 from "../../assets/images/modalities-section/kid-expression-5.png";
+---
+
+<style>
+  .background {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .background::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    /* bolinhas */
+    background-image: radial-gradient(rgb(0, 0, 0) 1px, transparent 1px);
+    background-size: 24px 24px;
+    z-index: 0;
+  }
+  .tab-container {
+    --indicator-width: 0px;
+    --indicator-left: 0px;
+  }
+
+  .tab-indicator {
+    position: absolute;
+    top: 0.5rem;
+    bottom: 0.5rem;
+    left: var(--indicator-left);
+    width: var(--indicator-width);
+    background: white;
+    border-radius: 9999px;
+    box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1);
+    pointer-events: none;
+    transition:
+      left 0.1s cubic-bezier(0.4, 0, 0.2, 1),
+      width 0.1s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 0;
+  }
+
+  .tab-button {
+    position: relative;
+    z-index: 10;
+    padding: 0.75rem 1.5rem;
+    margin: 0 0.25rem;
+    border-radius: 9999px;
+    border: none;
+    background: transparent;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: rgb(107 114 128);
+    white-space: nowrap;
+    cursor: pointer;
+    transition: color 0.3s ease;
+  }
+
+  .tab-button:first-child {
+    margin-left: 0;
+  }
+
+  .tab-button:last-child {
+    margin-right: 0;
+  }
+
+  .tab-button:hover {
+    color: rgb(75 85 99);
+  }
+
+  .tab-button.active {
+    color: rgb(31 41 55);
+    font-weight: 600;
+  }
+
+  .tab-button:focus-visible {
+    outline: 2px solid rgb(37 99 235);
+    outline-offset: 2px;
+  }
+
+  /* CSS DOS PAINÉIS - FALTAVA ISSO! */
+  .tab-panel {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    opacity: 0;
+    pointer-events: none;
+    display: none;
+  }
+
+  .tab-panel.active {
+    opacity: 1;
+    pointer-events: auto;
+    display: block;
+  }
+</style>
+
+<section
+  class="background relative bg-[#F4F4F4] h-screen flex flex-col overflow-hidden"
+  aria-labelledby="modalidades-title"
+>
+  <div
+    class="max-w-7xl mx-auto w-full h-full flex flex-col px-8 py-8 sm:px-12 md:px-16 lg:px-20"
+  >
+    <!-- Tab Navigation -->
+    <nav
+      class="flex justify-center mb-12 shrink-0"
+      role="tablist"
+      aria-label="Modalidades de ensino"
+    >
+      <div
+        class="tab-container relative inline-flex p-2 bg-white/80 backdrop-blur-lg rounded-full shadow-lg"
+        data-tab-container
+      >
+        <!-- Indicador animado -->
+        <div class="tab-indicator" data-tab-indicator aria-hidden="true"></div>
+
+        <button
+          class="tab-button active"
+          role="tab"
+          aria-selected="true"
+          aria-controls="executivo-panel"
+          id="executivo-tab"
+          data-tab="executivo"
+        >
+          executivo
+        </button>
+
+        <button
+          class="tab-button"
+          role="tab"
+          aria-selected="false"
+          aria-controls="academico-panel"
+          id="academico-tab"
+          data-tab="academico"
+        >
+          acadêmico
+        </button>
+
+        <button
+          class="tab-button"
+          role="tab"
+          aria-selected="false"
+          aria-controls="juridico-panel"
+          id="juridico-tab"
+          data-tab="juridico"
+        >
+          jurídico
+        </button>
+
+        <button
+          class="tab-button"
+          role="tab"
+          aria-selected="false"
+          aria-controls="preparatorio-panel"
+          id="preparatorio-tab"
+          data-tab="preparatorio"
+        >
+          preparatório
+        </button>
+
+        <button
+          class="tab-button"
+          role="tab"
+          aria-selected="false"
+          aria-controls="teens-panel"
+          id="teens-tab"
+          data-tab="teens"
+        >
+          teens
+        </button>
+
+        <button
+          class="tab-button"
+          role="tab"
+          aria-selected="false"
+          aria-controls="kids-panel"
+          id="kids-tab"
+          data-tab="kids"
+        >
+          kids
+        </button>
+      </div>
+    </nav>
+
+    <!-- Tab Content Container - Posição relativa para conter os painéis absolutos -->
+    <div class="relative flex-1 w-full">
+      <!-- Executivo Panel -->
+      <div
+        class="tab-panel active"
+        role="tabpanel"
+        id="executivo-panel"
+        aria-labelledby="executivo-tab"
+        data-panel="executivo"
+      >
+        <div class="grid lg:grid-cols-2 gap-12 items-center h-full">
+          <div class="flex flex-col gap-4">
+            <p
+              class="text-sm font-semibold tracking-wider uppercase text-gray-400"
+            >
+              EXECUTIVO
+            </p>
+            <h2
+              class="text-5xl sm:text-6xl lg:text-7xl font-bold text-[#28286F] leading-tight"
+            >
+              Confiança &<br />Destaque.
+            </h2>
+            <p
+              class="text-xl sm:text-2xl text-[#2A2286] leading-relaxed max-w-xl"
+            >
+              Foco em nuances culturais, diplomacia corporativa e técnicas de
+              persuasão em inglês avançado.
+            </p>
+            <button
+              class="group w-fit inline-flex items-center justify-center gap-3
+         px-10 py-4
+         bg-white/5 backdrop-blur-xs
+         text-[#252564]
+         rounded-full
+         border-2 border-[#ffffff]
+         font-semibold text-lg
+         transition-all duration-300
+         hover:shadow-md
+         focus:outline-none focus:ring-2 focus:ring-[#28286F]focus:ring-offset-2"
+            >
+              Saiba Mais
+              <svg
+                class="w-5 h-5 transition-transform duration-300 group-hover:translate-x-1"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                stroke-width="2.5"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+              </svg>
+            </button>
+          </div>
+          <div class="flex justify-center lg:justify-end">
+            <div class="relative w-full max-w-md h-80 sm:h-96">
+              <Image
+                src={ExecutivoImage}
+                alt="Teclado representando ensino executivo"
+                class="w-full h-full object-contain drop-shadow-2xl"
+                loading="lazy"
+                widths={[400, 600, 800]}
+                sizes="(max-width: 640px) 400px, (max-width: 1024px) 600px, 800px"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Acadêmico Panel -->
+      <div
+        class="tab-panel"
+        role="tabpanel"
+        id="academico-panel"
+        aria-labelledby="academico-tab"
+        data-panel="academico"
+      >
+        <div class="grid lg:grid-cols-2 gap-12 items-center h-full">
+          <div class="flex flex-col gap-4">
+            <p
+              class="text-sm font-semibold tracking-wider uppercase text-gray-400"
+            >
+              ACADÊMICO
+            </p>
+            <h2
+              class="text-5xl sm:text-6xl lg:text-7xl font-bold text-blue-900 leading-tight"
+            >
+              Excelência &<br />Conhecimento.
+            </h2>
+            <p
+              class="text-xl sm:text-2xl text-indigo-700 leading-relaxed max-w-xl"
+            >
+              Preparação para testes internacionais, escrita acadêmica e
+              vocabulário técnico especializado.
+            </p>
+            <button
+              class="group w-fit inline-flex items-center justify-center gap-3
+         px-10 py-4
+         bg-white/5 backdrop-blur-xs
+         text-[#252564]
+         rounded-full
+         border-2 border-[#ffffff]
+         font-semibold text-lg
+         transition-all duration-300
+         hover:shadow-md
+         focus:outline-none focus:ring-2 focus:ring-[#28286F]focus:ring-offset-2"
+            >
+              Saiba Mais
+              <svg
+                class="w-5 h-5 transition-transform duration-300 group-hover:translate-x-1"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                stroke-width="2.5"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+              </svg>
+            </button>
+          </div>
+          <div class="flex justify-center lg:justify-end">
+            <div class="relative w-full max-w-md h-80 sm:h-96">
+              <Image
+                src={AcademicoImage}
+                alt="Teclado representando ensino acadêmico"
+                class="w-full h-full object-contain drop-shadow-2xl"
+                loading="lazy"
+                widths={[400, 600, 800]}
+                sizes="(max-width: 640px) 400px, (max-width: 1024px) 600px, 800px"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Jurídico Panel -->
+      <div
+        class="tab-panel"
+        role="tabpanel"
+        id="juridico-panel"
+        aria-labelledby="juridico-tab"
+        data-panel="juridico"
+      >
+        <div class="grid lg:grid-cols-2 gap-12 items-center h-full">
+          <div class="flex flex-col gap-4">
+            <p
+              class="text-sm font-semibold tracking-wider uppercase text-gray-400"
+            >
+              JURÍDICO
+            </p>
+            <h2
+              class="text-5xl sm:text-6xl lg:text-7xl font-bold text-blue-900 leading-tight"
+            >
+              Precisão &<br />Expertise.
+            </h2>
+            <p
+              class="text-xl sm:text-2xl text-indigo-700 leading-relaxed max-w-xl"
+            >
+              Terminologia jurídica, interpretação de contratos e comunicação
+              profissional para o direito internacional.
+            </p>
+            <button
+              class="group w-fit inline-flex items-center justify-center gap-3
+         px-10 py-4
+         bg-white/5 backdrop-blur-xs
+         text-[#252564]
+         rounded-full
+         border-2 border-[#ffffff]
+         font-semibold text-lg
+         transition-all duration-300
+         hover:shadow-md
+         focus:outline-none focus:ring-2 focus:ring-[#28286F]focus:ring-offset-2"
+            >
+              Saiba Mais
+              <svg
+                class="w-5 h-5 transition-transform duration-300 group-hover:translate-x-1"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                stroke-width="2.5"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+              </svg>
+            </button>
+          </div>
+          <div class="flex justify-center lg:justify-end">
+            <div class="relative w-full max-w-md h-80 sm:h-96">
+              <Image
+                src={JuridicoImage}
+                alt="Teclado representando ensino acadêmico"
+                class="w-full h-full object-contain drop-shadow-2xl"
+                loading="lazy"
+                widths={[400, 600, 800]}
+                sizes="(max-width: 640px) 400px, (max-width: 1024px) 600px, 800px"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Preparatório Panel -->
+      <div
+        class="tab-panel"
+        role="tabpanel"
+        id="preparatorio-panel"
+        aria-labelledby="preparatorio-tab"
+        data-panel="preparatorio"
+      >
+        <div class="grid lg:grid-cols-2 gap-12 items-center h-full">
+          <div class="flex flex-col gap-4">
+            <p
+              class="text-sm font-semibold tracking-wider uppercase text-gray-400"
+            >
+              PREPARATÓRIO
+            </p>
+            <h2
+              class="text-5xl sm:text-6xl lg:text-7xl font-bold text-blue-900 leading-tight"
+            >
+              Aprovação &<br />Sucesso.
+            </h2>
+            <p
+              class="text-xl sm:text-2xl text-indigo-700 leading-relaxed max-w-xl"
+            >
+              Preparação intensiva para TOEFL, IELTS, Cambridge e outros exames
+              de proficiência internacional.
+            </p>
+            <button
+              class="group w-fit inline-flex items-center justify-center gap-3
+         px-10 py-4
+         bg-white/5 backdrop-blur-xs
+         text-[#252564]
+         rounded-full
+         border-2 border-[#ffffff]
+         font-semibold text-lg
+         transition-all duration-300
+         hover:shadow-md
+         focus:outline-none focus:ring-2 focus:ring-[#28286F]focus:ring-offset-2"
+            >
+              Saiba Mais
+              <svg
+                class="w-5 h-5 transition-transform duration-300 group-hover:translate-x-1"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                stroke-width="2.5"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+              </svg>
+            </button>
+          </div>
+          <div class="flex justify-center lg:justify-end">
+            <div class="relative w-full max-w-md h-80 sm:h-96">
+              <Image
+                src={PreparatorioImage}
+                alt="Teclado representando ensino acadêmico"
+                class="w-full h-full object-contain drop-shadow-2xl"
+                loading="lazy"
+                widths={[400, 600, 800]}
+                sizes="(max-width: 640px) 400px, (max-width: 1024px) 600px, 800px"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Teens Panel -->
+      <div
+        class="tab-panel"
+        role="tabpanel"
+        id="teens-panel"
+        aria-labelledby="teens-tab"
+        data-panel="teens"
+      >
+        <div class="grid lg:grid-cols-2 gap-12 items-center h-full">
+          <div class="flex flex-col gap-4">
+            <p
+              class="text-sm font-semibold tracking-wider uppercase text-gray-400"
+            >
+              TEENS
+            </p>
+            <h2
+              class="text-5xl sm:text-6xl lg:text-7xl font-bold text-blue-900 leading-tight"
+            >
+              Criatividade &<br />Futuro.
+            </h2>
+            <p
+              class="text-xl sm:text-2xl text-indigo-700 leading-relaxed max-w-xl"
+            >
+              Inglês dinâmico com foco em cultura pop, tecnologia e preparação
+              para o mundo globalizado.
+            </p>
+            <button
+              class="group w-fit inline-flex items-center justify-center gap-3
+         px-10 py-4
+         bg-white/5 backdrop-blur-xs
+         text-[#252564]
+         rounded-full
+         border-2 border-[#ffffff]
+         font-semibold text-lg
+         transition-all duration-300
+         hover:shadow-md
+         focus:outline-none focus:ring-2 focus:ring-[#28286F]focus:ring-offset-2"
+            >
+              Saiba Mais
+              <svg
+                class="w-5 h-5 transition-transform duration-300 group-hover:translate-x-1"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                stroke-width="2.5"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+              </svg>
+            </button>
+          </div>
+          <div class="flex justify-center lg:justify-end">
+            <div class="relative w-full max-w-md h-80 sm:h-96">
+              <Image
+                src={TeensImage}
+                alt="Teclado representando ensino acadêmico"
+                class="w-full h-full object-contain drop-shadow-2xl"
+                loading="lazy"
+                widths={[400, 600, 800]}
+                sizes="(max-width: 640px) 400px, (max-width: 1024px) 600px, 800px"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Kids Panel -->
+      <div
+        class="tab-panel"
+        role="tabpanel"
+        id="kids-panel"
+        aria-labelledby="kids-tab"
+        data-panel="kids"
+      >
+        <div class="grid lg:grid-cols-2 gap-12 items-center h-full">
+          <div class="flex flex-col gap-4">
+            <p
+              class="text-sm font-semibold tracking-wider uppercase text-gray-400"
+            >
+              KIDS
+            </p>
+            <h2
+              class="text-5xl sm:text-6xl lg:text-7xl font-bold text-blue-900 leading-tight"
+            >
+              Diversão &<br />Aprendizado.
+            </h2>
+            <p
+              class="text-xl sm:text-2xl text-indigo-700 leading-relaxed max-w-xl"
+            >
+              Metodologia lúdica e interativa para crianças desenvolverem
+              fluência de forma natural e divertida.
+            </p>
+            <button
+              class="group w-fit inline-flex items-center justify-center gap-3
+         px-10 py-4
+         bg-white/5 backdrop-blur-xs
+         text-[#252564]
+         rounded-full
+         border-2 border-[#ffffff]
+         font-semibold text-lg
+         transition-all duration-300
+         hover:shadow-md
+         focus:outline-none focus:ring-2 focus:ring-[#28286F]focus:ring-offset-2"
+            >
+              Saiba Mais
+              <svg
+                class="w-5 h-5 transition-transform duration-300 group-hover:translate-x-1"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                stroke-width="2.5"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+              </svg>
+            </button>
+          </div>
+          <div class="flex justify-center lg:justify-end">
+            <div class="relative w-full max-w-md h-80 sm:h-96">
+              <Image
+                src={kidExpr1}
+                alt="Criança aprendendo inglês"
+                class="w-full h-full object-contain drop-shadow-2xl"
+                data-kid-frame
+                loading="eager"
+              />
+              <Image
+                src={kidExpr2}
+                alt="Criança aprendendo inglês"
+                class="hidden w-full h-full object-contain drop-shadow-2xl"
+                data-kid-frame
+                loading="eager"
+              />
+              <Image
+                src={kidExpr3}
+                alt="Criança aprendendo inglês"
+                class="hidden w-full h-full object-contain drop-shadow-2xl"
+                data-kid-frame
+                loading="eager"
+              />
+              <Image
+                src={kidExpr4}
+                alt="Criança aprendendo inglês"
+                class="hidden w-full h-full object-contain drop-shadow-2xl"
+                data-kid-frame
+                loading="eager"
+              />
+              <Image
+                src={kidExpr5}
+                alt="Criança aprendendo inglês"
+                class="hidden w-full h-full object-contain drop-shadow-2xl"
+                data-kid-frame
+                loading="eager"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  import { initModalidadesTabs } from "../../scripts/modalidadesTabs";
+  import { initKidExpressions } from "../../scripts/kidsAnimations.js";
+
+  initModalidadesTabs();
+  initKidExpressions();
+</script>
