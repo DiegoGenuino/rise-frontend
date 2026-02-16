@@ -1,12 +1,18 @@
 ---
-
+import { Image } from 'astro:assets';
+import LogoRise from '../../assets/shared/logo-rise.png'
 ---
 
 <header
-  class="w-full min-h-min flex items-center justify-between bg-white py-4 px-6 md:px-12 relative z-30"
+  class="w-full min-h-min flex items-center justify-between bg-[#F4F4F4] py-4 px-6 md:px-12 relative z-30"
 >
   <!-- Logo -->
-  <div class="text-xl font-bold">RISE LOGO</div>
+  <div class="text-xl font-bold">
+    <Image src={LogoRise}
+    alt="Logotipo da Rise Idiomas"
+    width={50}
+ />
+  </div>
 
   <!-- Links - hidden no mobile -->
   <div class="flex items-center gap-8">
@@ -37,13 +43,13 @@
       aria-label="Toggle menu"
     >
       <span
-        class="h-5 w-5 bg-purple-500 block transition-transform group-hover:-translate-y-0.5"
+        class="h-5 w-5 bg-[#4242A5] block transition-transform group-hover:-translate-y-0.5"
       ></span>
       <span
-        class="h-5 w-5 bg-purple-500 rounded-full block transition-transform group-hover:-translate-y-0.5 delay-75"
+        class="h-5 w-5 bg-[#9c9cff] rounded-full block transition-transform group-hover:-translate-y-0.5 delay-75"
       ></span>
       <span
-        class="h-5 w-5 bg-purple-500 rounded-full block transition-transform group-hover:-translate-y-0.5 delay-150"
+        class="h-5 w-5 bg-[#42A5A5] block transition-transform group-hover:-translate-y-0.5 delay-150 [clip-path:polygon(50%_0%,0%_100%,100%_100%)] "
       ></span>
     </button>
   </div>
