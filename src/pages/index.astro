@@ -9,9 +9,36 @@ import Hero from '../sections/hero/Hero.astro';
 import Modalities from '../sections/modalities/Modalities.astro';
 ---
 
+
+<style>
+	:global(body) {
+		position: relative;
+		overflow-x: hidden;
+	}
+
+	:global(body)::before {
+		content: "";
+		position: fixed;
+		inset: 0;
+		/* bolinhas */
+		background-image: radial-gradient(rgba(0,0,0,0.1) 1px, transparent 1px);
+		background-size: 12px 12px;
+		z-index: 100;
+		pointer-events: none;
+	}
+	
+	/* Make Layout background transparent so pattern shows */
+	:global(body) {
+		background-color: transparent !important;
+	}
+</style>
+
 <BaseLayout>
-	<AnnouncementBar />
-	<Topbar />
-	<Hero />
-	<Modalities />
-</Layout>
+	<div class="w-full min-h-screen">
+		<AnnouncementBar />
+		<Topbar />
+		<Hero />
+		<Modalities />
+	</div>
+</BaseLayout>
+
