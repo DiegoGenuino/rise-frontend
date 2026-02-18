@@ -11,8 +11,10 @@
   "dependencies": {
     "@fontsource/fjalla-one": "^5.2.7",
     "@fontsource/poppins": "^5.2.7",
+    "@iconify-json/akar-icons": "^1.2.7",
     "@tailwindcss/vite": "^4.1.18",
     "astro": "^5.17.1",
+    "astro-icon": "^1.1.5",
     "gsap": "^3.14.2",
     "tailwindcss": "^4.1.18"
   }

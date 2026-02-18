@@ -1,7 +1,30 @@
+---
+import { Icon } from 'astro-icon/components'
+
+interface Props {
+  className?: string; // Allow passing external classes
+  text: string;
+  link: string;
+}
+
+const { className = '', text, link } = Astro.props;
+---
+
 <div
-  class="announcement-bar w-full bg-[#E6FF2C] py-2 md:p-4 flex items-center justify-center lg:text-xl"
+  class:list={[
+    "announcement-bar w-full bg-[#E6FF2C]/70 py-2 z-1 md:p-4 flex relative items-center justify-center min-h-[40px] px-8 md:px-16",
+    className
+  ]}
   role="region"
   aria-label="Aviso importante"
 >
-<p class="text-base font-bold lg:text-xl text-center">🎓Turmas abertas para 2026! Não perca a oportunidade de estudar conosco📚</p>
+  <!-- Mobile: Entire bar is the link, overlaid on top -->
+  <a href={link} class="md:hidden absolute inset-0 z-10 w-full h-full block" aria-label="Saiba mais"></a>
+
+  <p class="font-bold text-[clamp(0.6rem,2vw,1.125rem)] text-center whitespace-nowrap overflow-hidden text-ellipsis md:mr-0 mr-2">{text}</p>
+  
+  <!-- Desktop: Only the icon is the link -->
+  <a href={link} class="hidden md:block absolute right-4 md:right-8 hover:opacity-80 transition-opacity" aria-label="Saiba mais">
+    <Icon name="akar-icons:link-out" class="w-6 h-6 md:w-5 md:h-5" />
+  </a>
 </div>
