@@ -4,6 +4,7 @@ import AnnouncementBar from '../components/announcement-bar/AnnouncementBar.astr
 import Topbar from '../components/topbar/Topbar.astro';
 import Hero from '../sections/hero/Hero.astro';
 import Modalities from '../sections/modalities/Modalities.astro';
+import Analytics from '@vercel/analytics/astro';
 
 const displayAnnouncementBar = true;
 ---
@@ -39,5 +40,6 @@ const displayAnnouncementBar = true;
 		<Hero />
 		<Modalities />
 	</div>
+	<Analytics />
 </BaseLayout>
 
