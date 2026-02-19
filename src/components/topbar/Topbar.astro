@@ -1,187 +1,59 @@
 ---
 import { Image } from 'astro:assets';
 import RiseLogo from '../../assets/shared/rise-logo.svg'
+import TopbarOutline from '../../assets/icons/topbar-outline.svg?raw';
+import Hamburguer from './hamburguer/Hamburguer.astro';
+import Glass from '../glass/Glass.astro';
 ---
 
-<header
-  class="w-full min-h-min flex items-center justify-between bg-[#F4F4F4] py-4 px-6 md:px-12 relative z-30"
->
-  <!-- Logo -->
-  <div class="text-xl font-bold">
-    <img src={RiseLogo.src}
-    alt="Logotipo da Rise Idiomas"
-    width={50}
- />
+<div class="sticky top-0 z-50 relative overflow-visible">
+  <!-- Topbar outline SVG wrapper -->
+  <div class="topbar-outline-wrapper absolute inset-0 pointer-events-none z-10" aria-hidden="true">
+    <Fragment set:html={TopbarOutline} />
   </div>
-
-  <!-- Links - hidden no mobile -->
-  <div class="flex items-center gap-8">
-    <nav class="hidden md:block">
-      <ul class="flex items-center gap-8">
-        <li>
-          <a href="#" class="hover:text-purple-600 transition-colors"
-            >Modalidades</a
-          >
-        </li>
-        <li>
-          <a href="#" class="hover:text-purple-600 transition-colors"
-            >Depoimentos</a
-          >
-        </li>
-        <li
-          class="bg-purple-500 py-2 px-6 text-white rounded-xl hover:bg-purple-600 transition-colors"
-        >
-          <a href="#">Contato</a>
-        </li>
-      </ul>
-    </nav>
-
-    <!-- Hamburger Menu Button - visible on mobile -->
-    <button
-      id="menu-toggle"
-      class="flex gap-1.5 cursor-pointer z-50 group relative"
-      aria-label="Toggle menu"
-    >
-      <span
-        class="h-5 w-5 bg-[#4242A5] block transition-transform group-hover:-translate-y-0.5"
-      ></span>
-      <span
-        class="h-5 w-5 bg-[#9c9cff] rounded-full block transition-transform group-hover:-translate-y-0.5 delay-75"
-      ></span>
-      <span
-        class="h-5 w-5 bg-[#42A5A5] block transition-transform group-hover:-translate-y-0.5 delay-150 [clip-path:polygon(50%_0%,0%_100%,100%_100%)] "
-      ></span>
-    </button>
-  </div>
-</header>
-
-<!-- Mobile Menu Overlay -->
-<div
-  id="menu-overlay"
-  class="fixed inset-0 bg-[#1a1a1a] z-40 flex flex-col justify-center px-8 md:px-20 transition-all duration-500 ease-in-out opacity-0 pointer-events-none"
->
-  <!-- Close Button -->
-  <button
-    id="menu-close"
-    class="absolute top-6 right-6 text-[#6366f1] hover:text-white transition-colors z-50"
-    aria-label="Close menu"
+  
+  <header
+  class="w-full min-h-min flex items-center justify-between py-4 px-6 md:px-12 relative bg-transparent"
   >
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      fill="none"
-      viewBox="0 0 24 24"
-      stroke-width="2.5"
-      stroke="currentColor"
-      class="w-10 h-10 md:w-12 md:h-12"
-    >
-      <path
-        stroke-linecap="round"
-        stroke-linejoin="round"
-        d="M6 18L18 6M6 6l12 12"></path>
-    </svg>
-  </button>
+    <Glass intensity='low'/>
+    <!-- Logo -->
+    <div class="text-xl font-bold select-none">
+      <img src={RiseLogo.src}
+      alt="Logotipo da Rise Idiomas"
+      width={70}
+      draggable="false"
+      class="pointer-events-none select-none"
+   />
+    </div>
 
-  <!-- Menu Label -->
-  <div class="absolute top-6 left-6 text-gray-500 text-sm font-mono">
-    menu <span class="hidden md:inline">[desktop]</span><span class="md:hidden"
-      >[mobile]</span
-    >
-  </div>
+    <!-- Links and Menu -->
+    <div class="flex items-center gap-16">
+    <!-- Desktop Menu -->
+      <nav class="hidden md:block">
+        <ul class="flex items-center gap-10">
+          <li class="text-[#4242A5] font-semibold flex gap-10">
+            <a href="#" class="p-2">Modalidades</a>
+            <a href="#" class="p-2">Depoimentos</a>
+          </li>
+          <li class="bg-[#4242A5] py-2.5 px-6 rounded-[6px] text-white">
+            <a href="#">Contato</a>
+          </li>
+        </ul>
+      </nav>
 
-  <!-- Navigation Links -->
-
-  <!-- TODO: move this menu to 'menu' component -->
-  <nav class="flex flex-col space-y-3 md:space-y-6">
-    <a
-      href="/home"
-      class="menu-link group flex items-baseline gap-3 md:gap-6 no-underline"
-    >
-      <span class="text-xs md:text-base text-[#6366f1] font-mono opacity-60"
-        >1.</span
-      >
-      <span
-        class="text-outline text-4xl md:text-7xl lg:text-8xl font-light tracking-tight"
-      >
-        /home
-      </span>
-    </a>
-
-    <a
-      href="/blog"
-      class="menu-link group flex items-baseline gap-3 md:gap-6 no-underline"
-    >
-      <span class="text-xs md:text-base text-[#6366f1] font-mono opacity-60"
-        >2.</span
-      >
-      <span
-        class="text-outline text-4xl md:text-7xl lg:text-8xl font-light tracking-tight"
-      >
-        /blog
-      </span>
-    </a>
-
-    <a
-      href="/sobre"
-      class="menu-link group flex items-baseline gap-3 md:gap-6 no-underline"
-    >
-      <span class="text-xs md:text-base text-[#6366f1] font-mono opacity-60"
-        >3.</span
-      >
-      <span
-        class="text-outline text-4xl md:text-7xl lg:text-8xl font-light tracking-tight"
-      >
-        /sobre
-      </span>
-    </a>
-
-    <a
-      href="/contato"
-      class="menu-link group flex items-baseline gap-3 md:gap-6 no-underline"
-    >
-      <span class="text-xs md:text-base text-[#6366f1] font-mono opacity-60"
-        >4.</span
-      >
-      <span
-        class="text-outline text-4xl md:text-7xl lg:text-8xl font-light tracking-tight"
-      >
-        /contato
-      </span>
-    </a>
-  </nav>
+      <!-- Hamburger Menu Button -->
+      <Hamburguer id="menu-toggle" />
+    </div>
+  </header>
 </div>
 
 <style>
-  /* Text outline effect */
-  .text-outline {
-    color: transparent;
-    -webkit-text-stroke: 1.5px #6366f1;
-    text-stroke: 1.5px #6366f1;
-    transition: all 0.3s ease;
-  }
-
-  .menu-link:hover .text-outline {
-    -webkit-text-stroke: 2px #818cf8;
-    text-stroke: 2px #818cf8;
-    color: rgba(99, 102, 241, 0.1);
-  }
-
-  /* Prevent scroll when menu is open */
-  body.menu-open {
-    overflow: hidden;
-  }
-
-  /* Menu open state */
-  #menu-overlay.active {
-    opacity: 1;
-    pointer-events: auto;
-  }
-
-  /* Responsive text stroke */
-  @media (max-width: 768px) {
-    .text-outline {
-      -webkit-text-stroke: 1px #6366f1;
-      text-stroke: 1px #6366f1;
-    }
+  .topbar-outline-wrapper :global(svg) {
+    position: absolute;
+    top: -8px;
+    left: -28px;
+    width: calc(100% + 62px);
+    height: calc(100% + 16px);
   }
 </style>
 
