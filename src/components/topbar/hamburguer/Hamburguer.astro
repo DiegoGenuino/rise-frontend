@@ -1,4 +1,4 @@
----
+﻿---
 interface Props {
     id?: string;
     onClick?: string;
@@ -27,27 +27,36 @@ const { id, onClick } = Astro.props;
 </button>
 
 <script>
-    // Rasterize the SVG to a canvas once so feTurbulence doesn't shift on zoom
-    document.addEventListener("DOMContentLoaded", () => {
-        document.querySelectorAll(".hamburguer-svg").forEach((svg) => {
-            const svgElement = svg as HTMLElement;
-            const canvas = svg.previousElementSibling as HTMLCanvasElement;
-            if (!canvas || canvas.tagName !== "CANVAS") return;
+  document.addEventListener("DOMContentLoaded", () => {
+    const isSafari =
+      /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
 
-            const svgData = new XMLSerializer().serializeToString(svg);
-            const blob = new Blob([svgData], { type: "image/svg+xml;charset=utf-8" });
-            const url = URL.createObjectURL(blob);
-            const img = new Image();
-            img.onload = () => {
-                const ctx = canvas.getContext("2d");
-                if (ctx) {
-                    ctx.drawImage(img, 0, 0, 92, 72);
-                    canvas.style.display = "block";
-                    svgElement.style.display = "none";
-                }
-                URL.revokeObjectURL(url);
-            };
-            img.src = url;
-        });
+    if (isSafari) return;
+
+    document.querySelectorAll(".hamburguer-svg").forEach((svg) => {
+      const canvas = svg.previousElementSibling as HTMLCanvasElement;
+      if (!canvas || canvas.tagName !== "CANVAS") return;
+
+      const svgData = new XMLSerializer().serializeToString(svg);
+      const blob = new Blob([svgData], { type: "image/svg+xml;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+
+      const img = new Image();
+      img.onload = () => {
+        const ctx = canvas.getContext("2d");
+        if (ctx) {
+          canvas.width = 92;
+          canvas.height = 72;
+
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+          canvas.style.display = "block";
+          (svg as HTMLElement).style.display = "none";
+        }
+        URL.revokeObjectURL(url);
+      };
+      img.src = url;
     });
+  });
 </script>
