@@ -1,6 +1,5 @@
 @import "tailwindcss";
 
-/* Configuração de fontes usadas no site */
 @theme {
   --font-sans: "Poppins", system-ui, -apple-system, sans-serif;
   --font-display: "Fjalla One", system-ui, sans-serif;

@@ -1,32 +1,137 @@
+---
+import HamburguerOpenedSvg from '../../../assets/icons/hamburguer-opened.svg?raw';
+import MenuLinkBg from '../../../assets/icons/menu-link-bg.svg';
+---
+
 <!-- Mobile Menu Overlay -->
 <div
   id="menu-overlay"
-  class="fixed inset-0 bg-[#1a1a1a] z-40 flex flex-col justify-center px-8 md:px-20 transition-all duration-500 ease-in-out opacity-0 pointer-events-none"
+  class="menu-overlay fixed inset-0 z-50 flex flex-col justify-center px-8 md:px-20"
 >
-  <!-- Close Button -->
+  <!-- Glass Background removed (handled in CSS) -->
+
   <button
     id="menu-close"
-    class="absolute top-6 right-6 text-[#6366f1] hover:text-white transition-colors z-50"
+    class="absolute top-[13px] right-4 md:top-[33px] md:right-12 z-50 cursor-pointer"
     aria-label="Close menu"
   >
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      fill="none"
-      viewBox="0 0 24 24"
-      stroke-width="2.5"
-      stroke="currentColor"
-      class="w-10 h-10 md:w-12 md:h-12"
-    >
-      <path
-        stroke-linecap="round"
-        stroke-linejoin="round"
-        d="M6 18L18 6M6 6l12 12"></path>
-    </svg>
+    <div class="w-[44px] h-[36px] md:w-[56px] md:h-[46px]">
+      <Fragment set:html={HamburguerOpenedSvg} />
+    </div>
   </button>
 
-  <!-- Menu Label -->
-  <div class="absolute top-6 left-6 text-gray-500 text-sm font-mono">
-    menu <span class="hidden md:inline">[desktop]</span><span class="md:hidden"
-      >[mobile]</span
-    >
-  </div>
+  <!-- Navigation Links -->
+  <nav class="relative z-10 flex flex-col gap-4 md:gap-6 pl-8 md:pl-20">
+    <div class="menu-item-wrapper group">
+      <span class="text-[#4242A5] text-lg md:text-2xl font-light mr-2 md:mr-4 select-none opacity-80">1.</span>
+      <a
+        href="/"
+        class="menu-link text-[#4242A5] text-[3.5rem] md:text-8xl font-thin tracking-tight text-left relative inline-block leading-none"
+      >
+        <span class="relative z-10">/home</span>
+        <img
+          src={MenuLinkBg.src}
+          alt=""
+          aria-hidden="true"
+          class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[250%] h-[250%] object-contain -z-10 opacity-0 group-hover:opacity-75 transition-opacity duration-500 ease-out pointer-events-none scale-150 origin-center"
+        />
+      </a>
+    </div>
+
+    <div class="menu-item-wrapper group">
+      <span class="text-[#4242A5] text-lg md:text-2xl font-light mr-2 md:mr-4 select-none opacity-80">2.</span>
+      <a
+        href="/blog"
+        class="menu-link text-[#4242A5] text-[3.5rem] md:text-8xl font-thin tracking-tight text-left relative inline-block leading-none"
+      >
+        <span class="relative z-10">/blog</span>
+        <img
+          src={MenuLinkBg.src}
+          alt=""
+          aria-hidden="true"
+          class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[250%] h-[250%] object-contain -z-10 opacity-0 group-hover:opacity-75 transition-opacity duration-500 ease-out pointer-events-none scale-150 origin-center"
+        />
+      </a>
+    </div>
+
+    <div class="menu-item-wrapper group">
+      <span class="text-[#4242A5] text-lg md:text-2xl font-light mr-2 md:mr-4 select-none opacity-80">3.</span>
+      <a
+        href="/sobre"
+        class="menu-link text-[#4242A5] text-[3.5rem] md:text-8xl font-thin tracking-tight text-left relative inline-block leading-none"
+      >
+        <span class="relative z-10">/sobre</span>
+        <img
+          src={MenuLinkBg.src}
+          alt=""
+          aria-hidden="true"
+          class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[250%] h-[250%] object-contain -z-10 opacity-0 group-hover:opacity-75 transition-opacity duration-500 ease-out pointer-events-none scale-150 origin-center"
+        />
+      </a>
+    </div>
+
+    <div class="menu-item-wrapper group">
+      <span class="text-[#4242A5] text-lg md:text-2xl font-light mr-2 md:mr-4 select-none opacity-80">4.</span>
+      <a
+        href="/contato"
+        class="menu-link text-[#4242A5] text-[3.5rem] md:text-8xl font-thin tracking-tight text-left relative inline-block leading-none"
+      >
+        <span class="relative z-10">/contato</span>
+        <img
+          src={MenuLinkBg.src}
+          alt=""
+          aria-hidden="true"
+          class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[250%] h-[250%] object-contain -z-10 opacity-0 group-hover:opacity-75 transition-opacity duration-500 ease-out pointer-events-none scale-150 origin-center"
+        />
+      </a>
+    </div>
+  </nav>
+</div>
+
+<style>
+  .menu-overlay {
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 500ms cubic-bezier(0.25, 1, 0.5, 1);
+    background: rgba(245, 245, 250, 0.25); /* More transparent for glass effect */
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+  }
+
+  .menu-overlay.active {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  /* Flex wrapper to align number and text */
+  .menu-item-wrapper {
+    display: flex;
+    align-items: baseline;
+    transform: translateX(-20px);
+    opacity: 0;
+    transition:
+      transform 400ms cubic-bezier(0.25, 1, 0.5, 1),
+      opacity 400ms cubic-bezier(0.25, 1, 0.5, 1);
+  }
+
+  .menu-overlay.active .menu-item-wrapper {
+    transform: translateX(0);
+    opacity: 1;
+  }
+
+  .menu-overlay.active .menu-item-wrapper:nth-child(1) { transition-delay: 100ms; }
+  .menu-overlay.active .menu-item-wrapper:nth-child(2) { transition-delay: 200ms; }
+  .menu-overlay.active .menu-item-wrapper:nth-child(3) { transition-delay: 300ms; }
+  .menu-overlay.active .menu-item-wrapper:nth-child(4) { transition-delay: 400ms; }
+
+  /* Ensure inlined SVG fills wrapper */
+  #menu-close :global(svg) {
+    width: 100%;
+    height: 100%;
+  }
+
+  /* Override local SVG color for the close button to match the dark theme on light bg */
+  #menu-close :global(path) {
+    fill: #4242A5;
+  }
+</style>
