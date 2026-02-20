@@ -14,7 +14,7 @@ const displayAnnouncementBar = true;
 	:global(body) {
 		position: relative;
 		overflow-x: hidden;
-	}
+		}
 
 	:global(body)::before {
 		content: "";
@@ -33,7 +33,7 @@ const displayAnnouncementBar = true;
 	}
 </style>
 
-<BaseLayout title='HOME - Rise Idiomas' description='Plataforma de ensino de idiomas com cursos e modalidades diversas'>
+<BaseLayout title='Home' description='Plataforma de ensino de idiomas com cursos e modalidades diversas'>
 	<div class="w-full min-h-screen">
 		{displayAnnouncementBar && <AnnouncementBar text="🎓Turmas abertas para 2026! Não perca a oportunidade de estudar conosco📚" link="#" />}
 		<Topbar />
