@@ -215,7 +215,7 @@ const subheaderText =
       2xl:h-[24rem]"
   >
     <h1
-      class="hero-title font-light w-full bg-gradient-to-r from-[#401EFF] via-[#9090FF] to-[#C0C0FF]
+      class="hero-title font-display w-full bg-gradient-to-r from-[#401EFF] via-[#9090FF] to-[#C0C0FF]
         bg-clip-text text-transparent leading-[1.1] pb-3 overflow-visible select-none
         text-7xl
         sm:text-8xl
@@ -226,7 +226,7 @@ const subheaderText =
     >
     </h1>
 
-    <h2
+    <p
       class="hero-animate hero-animate-delay-2 hidden text-[#4242A5E5]
         sm:block sm:text-lg sm:mt-2
         md:text-xl md:mt-3
@@ -235,7 +235,7 @@ const subheaderText =
       id="hero-subheader-desktop"
     >
       {subheaderText}
-    </h2>
+  </p>
   </header>
 
   <!-- Spacer: pushes content toward bottom on mobile/tablet -->
@@ -265,12 +265,12 @@ const subheaderText =
   </div>
 
   <!-- Mobile-only subheader -->
-  <h2
+  <p
     class="hero-mobile-subheader hero-animate hero-animate-delay-4
       shrink-0 py-3 text-xl text-center text-[#4242A5E5] sm:hidden"
   >
     {subheaderText}
-  </h2>
+</p>
 </section>
 
 <script>
