@@ -4,11 +4,12 @@ import AnnouncementBar from '../components/announcement-bar/AnnouncementBar.astr
 import Topbar from '../components/topbar/Topbar.astro';
 import Hero from '../sections/hero/Hero.astro';
 import Modalities from '../sections/modalities/Modalities.astro';
+import CTA from '../sections/cta/CTA.astro';
+import Footer from '../sections/footer/Footer.astro';
 import Analytics from '@vercel/analytics/astro';
 
 const displayAnnouncementBar = true;
 ---
-
 
 <style>
 	:global(body) {
@@ -39,6 +40,8 @@ const displayAnnouncementBar = true;
 		<Topbar />
 		<Hero />
 		<Modalities />
+		<CTA />
+		<Footer />
 	</div>
 	<Analytics />
 </BaseLayout>
