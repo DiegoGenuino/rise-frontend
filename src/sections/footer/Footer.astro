@@ -1,0 +1,67 @@
+---
+import SocialMediaIcon from '../../components/footer/social-media-icon/SocialMediaIcon.astro';
+import FooterTopic from '../../components/footer/topic/FooterTopic.astro';
+import riseLogo from '../../assets/shared/rise-logo.svg';
+
+const contatoLinks = [
+  [
+    { label: 'Instagram', url: 'https://instagram.com' },
+    { label: 'Whatsapp', url: 'https://whatsapp.com' },
+    { label: 'Youtube', url: 'https://youtube.com' },
+    { label: 'TikTok', url: 'https://tiktok.com' },
+  ],
+  [
+    { label: 'LinkedIn', url: 'https://linkedin.com' },
+    { label: 'X', url: 'https://x.com' },
+    { label: 'Facebook', url: 'https://facebook.com' },
+    { label: 'Email', url: 'mailto:contato@riseidiomas.com' },
+  ],
+];
+
+const saibaMaisLinks = [
+  [
+    { label: 'Instagram', url: 'https://instagram.com' },
+    { label: 'TikTok', url: 'https://tiktok.com' },
+  ],
+];
+
+const socialIcons = [
+  { name: 'Instagram', icon: 'instagram', url: 'https://instagram.com' },
+  { name: 'Whatsapp', icon: 'whatsapp', url: 'https://whatsapp.com' },
+  { name: 'Youtube', icon: 'youtube', url: 'https://youtube.com' },
+  { name: 'TikTok', icon: 'tiktok', url: 'https://tiktok.com' },
+  { name: 'LinkedIn', icon: 'linkedin', url: 'https://linkedin.com' },
+  { name: 'X', icon: 'x', url: 'https://x.com' },
+  { name: 'Facebook', icon: 'facebook', url: 'https://facebook.com' },
+] as const;
+---
+
+<footer class="relative z-[1] bg-white pt-12 pb-0 px-6">
+  <div class="max-w-[1200px] mx-auto">
+
+    <!-- logo + topics -->
+    <div class="grid grid-cols-1 sm:grid-cols-[auto_1fr] gap-10 sm:gap-16 mb-10 items-start">
+      <img src={riseLogo.src} alt="Rise Idiomas" class="w-20" />
+      <div class="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-[auto_auto] gap-8 sm:gap-16">
+        <FooterTopic title="Contato" links={contatoLinks} />
+        <FooterTopic title="Saiba mais" links={saibaMaisLinks} />
+      </div>
+    </div>
+
+    <!-- social icons -->
+    <div class="flex flex-wrap gap-3 mb-8">
+      {socialIcons.map((s) => (
+        <SocialMediaIcon name={s.name} icon={s.icon} url={s.url} />
+      ))}
+    </div>
+
+    <!-- bottom bar -->
+    <div class="pb-6">
+      <hr class="border-0 border-t border-[#e0e0e0] mb-4" />
+      <p class="text-center text-xs text-[#888] tracking-[0.04em]">
+        2026 RISE IDIOMAS. DESENVOLVIDO POR SUBLIME STUDIO.
+      </p>
+    </div>
+
+  </div>
+</footer>
