@@ -1,0 +1,120 @@
+---
+import Button from '../../components/button/Button.astro';
+import StudentIcon from '../../components/student-icon/StudentIcon.astro';
+
+const students = [
+  { src: 'https://plus.unsplash.com/premium_vector-1711987772726-64785d1bade8?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8cG9ydHJhaXR8ZW58MHx8MHx8fDA%3D', alt: 'Aluna 1' },
+  { src: 'https://plus.unsplash.com/premium_vector-1711987772726-64785d1bade8?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8cG9ydHJhaXR8ZW58MHx8MHx8fDA%3D', alt: 'Aluna 2' },
+  { src: 'https://plus.unsplash.com/premium_vector-1711987772726-64785d1bade8?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8cG9ydHJhaXR8ZW58MHx8MHx8fDA%3D', alt: 'Aluna 3' },
+  { src: 'https://plus.unsplash.com/premium_vector-1711987772726-64785d1bade8?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8cG9ydHJhaXR8ZW58MHx8MHx8fDA%3D', alt: 'Aluna 4' },
+  { src: 'https://plus.unsplash.com/premium_vector-1711987772726-64785d1bade8?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8cG9ydHJhaXR8ZW58MHx8MHx8fDA%3D', alt: 'Aluna 5' },
+  { src: 'https://plus.unsplash.com/premium_vector-1711987772726-64785d1bade8?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8cG9ydHJhaXR8ZW58MHx8MHx8fDA%3D', alt: 'Aluna 6' },
+];
+---
+
+<section class="relative py-40 z-1 bg-transparent overflow-hidden">
+
+  <!-- <div class="ring ring-1" aria-hidden="true"></div>
+  <div class="ring ring-2" aria-hidden="true"></div>
+  <div class="ring ring-3" aria-hidden="true"></div> -->
+
+  <div class="photos-desktop" aria-hidden="true">
+    <div class="pw pw-tl"><StudentIcon src={students[0].src} alt={students[0].alt} /></div>
+    <div class="pw pw-ml"><StudentIcon src={students[1].src} alt={students[1].alt} /></div>
+    <div class="pw pw-bl"><StudentIcon src={students[2].src} alt={students[2].alt} /></div>
+    <div class="pw pw-tr"><StudentIcon src={students[3].src} alt={students[3].alt} /></div>
+    <div class="pw pw-mr"><StudentIcon src={students[4].src} alt={students[4].alt} /></div>
+    <div class="pw pw-br"><StudentIcon src={students[5].src} alt={students[5].alt} /></div>
+  </div>
+
+  <!-- center -->
+  <div class="flex flex-col items-center justify-center gap-6">
+    <h2 class="w-full text-center font-display font-bold lg:text-5xl text-[#4242A5]">
+      Preparado para dar um salto<br />na sua carreira?
+    </h2>
+    <Button label="Fale conosco" href="#" variant="solid" />
+  </div>
+
+  <!-- mobile photo row -->
+  <div class="photos-mobile">
+    {students.slice(0, 4).map((s) => (
+      <div class="pw-mobile"><StudentIcon src={s.src} alt={s.alt} /></div>
+    ))}
+  </div>
+
+</section>
+
+<style>
+  /* ── rings ── */
+  .ring {
+    position: absolute;
+    border-radius: 50%;
+    border: 2.5px solid rgba(90, 80, 200, 0.28);
+    pointer-events: none;
+    z-index: 0;
+  }
+  .ring-1 { width: 320px; height: 320px; top: -110px; left: -60px; }
+  .ring-2 { width: 260px; height: 260px; bottom: -90px; left: 22%; }
+  .ring-3 { width: 300px; height: 300px; top: -100px; right: -50px; }
+
+  /* ── photo wrappers (desktop) ── */
+  .photos-desktop {
+    display: none;
+  }
+
+  @media (min-width: 768px) {
+    .photos-desktop {
+      display: block;
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 1;
+    }
+    .cta-section { height: 280px; }
+  }
+
+  .pw {
+    position: absolute;
+  }
+  /* left column */
+  .pw-tl { width: 88px;  height: 104px; top: 10%;    left: 3%; }
+  .pw-ml { width: 108px; height: 126px; top: 32%;    left: 13%; }
+  .pw-bl { width: 90px;  height: 106px; bottom: 8%;  left: 3%; }
+  /* right column */
+  .pw-tr { width: 108px; height: 126px; top: 6%;     right: 13%; }
+  .pw-mr { width: 88px;  height: 104px; top: 8%;     right: 2%; }
+  .pw-br { width: 96px;  height: 114px; bottom: 6%;  right: 4%; }
+
+  /* make StudentIcon fill wrapper */
+  .pw > div,
+  .pw-mobile > div {
+    width: 100%;
+    height: 100%;
+  }
+
+
+  /* ── mobile photos ── */
+  .photos-mobile {
+    display: none;
+  }
+
+  @media (max-width: 767px) {
+    .cta-section {
+      height: auto;
+      padding: 3rem 1.5rem 2rem;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+    .photos-mobile {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+    }
+    .pw-mobile {
+      width: 64px;
+      height: 76px;
+    }
+  }
+</style>
+
