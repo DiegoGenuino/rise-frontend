@@ -1,6 +1,4 @@
 ---
-// TODO: implement reusable frame of those social media links at the footer
-
 const { name, icon, url, class: className = '' } = Astro.props;
 
 type IconName = 'instagram' | 'whatsapp' | 'youtube' | 'tiktok' | 'linkedin' | 'x' | 'facebook';
@@ -28,39 +26,14 @@ const icons: Record<IconName, string> = {
 };
 ---
 
-<a 
+<a
   href={url}
   target="_blank"
   rel="noopener noreferrer"
-  class={`social-icon ${className}`}
+  class={`flex items-center justify-center w-14 h-14 bg-[#4a4a9e] rounded-full text-white no-underline transition-all duration-300 hover:bg-[#3a3a8e] hover:-translate-y-1 ${className}`}
   aria-label={name}
 >
-  <svg class="icon" viewBox="0 0 24 24" fill="currentColor">
+  <svg class="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
     <path d={icons[icon]} />
   </svg>
 </a>
-
-<style>
-  .social-icon {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 3.5rem;
-    height: 3.5rem;
-    background-color: #4a4a9e;
-    border-radius: 1.25rem;
-    color: white;
-    transition: all 0.3s ease;
-    text-decoration: none;
-  }
-
-  .social-icon:hover {
-    background-color: #3a3a8e;
-    transform: translateY(-2px);
-  }
-
-  .icon {
-    width: 1.5rem;
-    height: 1.5rem;
-  }
-</style>
