@@ -214,10 +214,11 @@ const subheaderText =
       lg:h-[22rem]
       2xl:h-[24rem]"
   >
+    <!-- fix responsivity for mobile [line 222]: large words overflow vw -->
     <h1
       class="hero-title font-display w-full bg-gradient-to-r from-[#401EFF] via-[#9090FF] to-[#C0C0FF]
         bg-clip-text text-transparent leading-[1.1] pb-3 overflow-visible select-none
-        text-7xl
+        text-8xl
         sm:text-8xl
         md:text-7xl
         lg:text-9xl
@@ -235,7 +236,7 @@ const subheaderText =
       id="hero-subheader-desktop"
     >
       {subheaderText}
-  </p>
+    </p>
   </header>
 
   <!-- Spacer: pushes content toward bottom on mobile/tablet -->
@@ -265,12 +266,12 @@ const subheaderText =
   </div>
 
   <!-- Mobile-only subheader -->
-  <p
+  <!-- <p
     class="hero-mobile-subheader hero-animate hero-animate-delay-4
       shrink-0 py-3 text-xl text-center text-[#4242A5E5] sm:hidden"
   >
     {subheaderText}
-</p>
+  </p> -->
 </section>
 
 <script>

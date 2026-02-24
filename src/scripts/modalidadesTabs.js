@@ -5,30 +5,29 @@ export function initModalidadesTabs() {
   const tabs = document.querySelectorAll('.tab-button');
   const panels = document.querySelectorAll('[role="tabpanel"]');
   const indicator = document.querySelector('[data-tab-indicator]');
-  
+
   if (!tabs.length || !panels.length || !indicator || !container) {
     console.error("Tab elements not found");
     return;
   }
 
   let currentTab = tabs[0];
-  let isAnimating = false; // Prevenir cliques durante animação
+  let isAnimating = false;
 
-  // Função para atualizar posição do indicador
+  // ── Indicator position ──────────────────────────────────────────────────────
   function updateIndicator(tab, animate = true) {
     const tabRect = tab.getBoundingClientRect();
     const containerRect = container.getBoundingClientRect();
-    
     const left = tabRect.left - containerRect.left;
     const width = tabRect.width;
-    
+
     if (animate) {
+      // GSAP animates the CSS vars; the CSS transition handles the pill visuals
       gsap.to(container, {
         '--indicator-left': `${left}px`,
         '--indicator-width': `${width}px`,
-        // Duração do indicador, se alterar aqui, alterar no .tab-indicator no css.
-        duration: 0.1, 
-        ease: "power2.out"
+        duration: 0.5,
+        ease: "power4.out"
       });
     } else {
       gsap.set(container, {
@@ -38,81 +37,133 @@ export function initModalidadesTabs() {
     }
   }
 
-  // Inicializar
+  // Initialise indicator position after layout settles
   setTimeout(() => {
     updateIndicator(currentTab, false);
   }, 50);
 
-  // Função para trocar de tab
+  // ── Direction-aware crossfade + slide ───────────────────────────────────────
   function switchTab(newTab) {
-    // Bloquear se já estiver animando
     if (newTab === currentTab || isAnimating) return;
-    
-    isAnimating = true; // Marcar como animando
+    isAnimating = true;
+
+    const tabsArray = Array.from(tabs);
+    const oldIndex = tabsArray.indexOf(currentTab);
+    const newIndex = tabsArray.indexOf(newTab);
+    const direction = newIndex > oldIndex ? 1 : -1; // 1 = going right, -1 = going left
 
     const oldPanel = document.querySelector(`#${currentTab.getAttribute('aria-controls')}`);
     const newPanel = document.querySelector(`#${newTab.getAttribute('aria-controls')}`);
 
-    // Atualizar ARIA e classes
+    // Update ARIA + active class
     currentTab.setAttribute('aria-selected', 'false');
     currentTab.classList.remove('active');
-    
     newTab.setAttribute('aria-selected', 'true');
     newTab.classList.add('active');
 
-    // Animar indicador
+    // Animate the indicator pill
     updateIndicator(newTab, true);
 
-    // Matar todas as animações anteriores
+    // Kill any in-flight tweens
     gsap.killTweensOf([oldPanel, newPanel]);
 
-    // Animar painéis
+    const SLIDE_PX = 20;       // gentler horizontal drift on exit/enter
+    const EXIT_DUR = 0.35;     // slower exit speed for smooth crossfade
+    const ENTER_DUR = 0.55;    // slower enter speed
+    const EXIT_EASE = "power2.inOut";
+    const ENTER_EASE = "power3.out";
+
     const tl = gsap.timeline({
-      onComplete: () => {
-        isAnimating = false; // Liberar após conclusão
-      }
+      onComplete: () => { isAnimating = false; }
     });
 
-    tl.to(oldPanel, {
-      opacity: 0,
-      duration: 0.3, // Mexer aqui para deixar maois rápido ou devagar
-      ease: "power2.in",
-      onStart: () => {
-        // Garantir que o painel antigo está visível
-        oldPanel.style.display = 'block';
-      },
-      onComplete: () => {
-        oldPanel.classList.remove('active');
-        oldPanel.style.display = 'none'; // Forçar display none
-      }
-    })
-    .set(newPanel, {
-      display: 'block', // Garantir que está visível
-      opacity: 0,
-      y: 20 // Mexer aqui para alterar a altura do movimento dos paíneis
-    })
-    .add(() => {
-      newPanel.classList.add('active');
-    })
-    .to(newPanel, {
-      opacity: 1,
-      y: 0,
-      duration: 0.5, // Mexer aqui para deixar maois rápido ou devagar, QUANTO MAIOR, mais devagar
-      ease: "power2.out"
-    });
+    const isMobile = window.innerWidth < 768;
+
+    if (isMobile) {
+      // --- MOBILE ANIMATION: Simple Fade (No Slide) ---
+      // 1. Fade old panel out fast
+      tl.to(oldPanel, {
+        opacity: 0,
+        x: 0,
+        duration: 0.25,
+        ease: "power2.inOut",
+        onStart: () => { oldPanel.style.visibility = 'visible'; },
+        onComplete: () => {
+          oldPanel.classList.remove('active');
+          oldPanel.style.visibility = 'hidden';
+        }
+      });
+
+      // 2. Prepare new panel
+      tl.set(newPanel, {
+        visibility: 'visible',
+        opacity: 0,
+        x: 0,
+        y: 10,
+      });
+
+      tl.add(() => { newPanel.classList.add('active'); });
+
+      // 3. Fade new panel in and float up slightly
+      tl.to(newPanel, {
+        opacity: 1,
+        y: 0,
+        duration: 0.4,
+        ease: "power3.out",
+      }, ">");
+
+    } else {
+      // --- DESKTOP ANIMATION: Horizontal Slide Crossfade ---
+      // 1. Exit: fade + drift in departure direction
+      tl.to(oldPanel, {
+        opacity: 0,
+        x: -direction * SLIDE_PX,
+        duration: EXIT_DUR,
+        ease: EXIT_EASE,
+        onStart: () => { oldPanel.style.visibility = 'visible'; },
+        onComplete: () => {
+          oldPanel.classList.remove('active');
+          oldPanel.style.visibility = 'hidden';
+          gsap.set(oldPanel, { x: 0 });
+        }
+      });
+
+      // 2. Prepare new panel
+      tl.set(newPanel, {
+        visibility: 'visible',
+        opacity: 0,
+        x: direction * SLIDE_PX,
+      });
+
+      tl.add(() => { newPanel.classList.add('active'); });
+
+      // 3. Wait for exit to finish, then fade + slide in
+      tl.to(newPanel, {
+        opacity: 1,
+        x: 0,
+        duration: ENTER_DUR,
+        ease: ENTER_EASE,
+      }, ">");
+    }
 
     currentTab = newTab;
   }
 
-  // Event listeners
+  // ── Event listeners ─────────────────────────────────────────────────────────
   tabs.forEach((tab) => {
-    tab.addEventListener('click', () => switchTab(tab));
-    
-    // Navegação por teclado
+    tab.addEventListener('click', () => {
+      stopAutoPlay();
+      switchTab(tab);
+    });
+
     tab.addEventListener('keydown', (e) => {
       const tabsArray = Array.from(tabs);
       let index = tabsArray.indexOf(tab);
-      
+
+      if (['ArrowRight', 'ArrowLeft', 'Home', 'End'].includes(e.key)) {
+        stopAutoPlay();
+      }
+
       if (e.key === 'ArrowRight') {
         e.preventDefault();
         index = (index + 1) % tabs.length;
@@ -135,7 +186,7 @@ export function initModalidadesTabs() {
     });
   });
 
-  // Atualizar no resize
+  // Re-position indicator on resize
   let resizeTimeout;
   window.addEventListener('resize', () => {
     clearTimeout(resizeTimeout);
@@ -143,4 +194,32 @@ export function initModalidadesTabs() {
       updateIndicator(currentTab, false);
     }, 100);
   });
+
+  // ── Autoplay functionality ────────────────────────────────────────────────────
+  let autoPlayInterval;
+  const AUTOPLAY_DELAY = 5000; // 5 seconds per tab
+
+  function startAutoPlay() {
+    autoPlayInterval = setInterval(() => {
+      // Don't auto-advance if tab changes are currently animating
+      if (isAnimating) return;
+
+      const tabsArray = Array.from(tabs);
+      const currentIndex = tabsArray.indexOf(currentTab);
+      // Loop back to the start if we reach the end
+      const nextIndex = (currentIndex + 1) % tabsArray.length;
+
+      switchTab(tabsArray[nextIndex]);
+    }, AUTOPLAY_DELAY);
+  }
+
+  function stopAutoPlay() {
+    if (autoPlayInterval) {
+      clearInterval(autoPlayInterval);
+      autoPlayInterval = null;
+    }
+  }
+
+  // Start the autoplay loop when the script initializes
+  startAutoPlay();
 }

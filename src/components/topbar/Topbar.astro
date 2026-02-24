@@ -1,44 +1,53 @@
 ---
-import { Image } from 'astro:assets';
-import RiseLogo from '../../assets/shared/rise-logo.svg'
-import TopbarOutline from '../../assets/icons/topbar-outline.svg?raw';
-import Hamburguer from './hamburguer/Hamburguer.astro';
-import Menu from './menu/Menu.astro';
-import Glass from '../glass/Glass.astro';
+import RiseLogo from "../../assets/shared/rise-logo.svg";
+import TopbarOutline from "../../assets/icons/topbar-outline.svg?raw";
+import Hamburguer from "./hamburguer/Hamburguer.astro";
+import Menu from "./menu/Menu.astro";
+import Glass from "../glass/Glass.astro";
 ---
 
-<div class="sticky top-0 z-50 relative w-full overflow-x-clip overflow-y-visible max-w-[100vw]">
+<div class="sticky top-0 z-[50] w-full max-w-[100vw] overflow-x-clip">
   <!-- Topbar outline SVG wrapper -->
-  <div class="topbar-outline-wrapper absolute inset-0 pointer-events-none z-10" aria-hidden="true">
+  <div
+    class="topbar-outline-wrapper absolute inset-0 pointer-events-none z-10"
+    aria-hidden="true"
+  >
     <Fragment set:html={TopbarOutline} />
   </div>
-  
+
   <header
-  class="w-full min-h-[50px] md:min-h-[60px] flex items-center justify-between py-3 px-4 md:py-4 md:px-12 relative bg-transparent"
+    class="w-full min-h-[50px] md:min-h-[60px] flex items-center justify-between py-3 px-4 md:py-4 md:px-12 relative bg-transparent"
   >
-    <Glass intensity='low'/>
+    <Glass intensity="low" />
     <!-- Logo -->
     <div class="text-xl font-bold select-none">
-      <img src={RiseLogo.src}
-      alt="Logotipo da Rise Idiomas"
-      width={70}
-      loading="eager"
-      draggable="false"
-      class="pointer-events-none select-none w-[50px] md:w-[70px]"
-   />
+      <img
+        src={RiseLogo.src}
+        alt="Logotipo da Rise Idiomas"
+        width={70}
+        loading="eager"
+        draggable="false"
+        class="pointer-events-none select-none w-[50px] md:w-[70px]"
+      />
     </div>
 
     <!-- Links and Menu -->
     <div class="flex items-center gap-16">
-    <!-- Desktop Menu -->
+      <!-- Desktop Menu -->
       <nav class="hidden md:block">
         <ul class="flex items-center gap-10">
           <li class="text-[#4242A5] font-semibold flex gap-10">
-            <button data-scroll-to="modalidades" class="p-2 cursor-pointer">Modalidades</button>
-            <button data-scroll-to="depoimentos" class="p-2 cursor-pointer">Depoimentos</button>
+            <button data-scroll-to="modalidades" class="p-2 cursor-pointer"
+              >Modalidades</button
+            >
+            <button data-scroll-to="depoimentos" class="p-2 cursor-pointer"
+              >Depoimentos</button
+            >
           </li>
           <li class="bg-[#4242A5] py-2.5 px-6 rounded-[6px] text-white">
-            <button data-scroll-to="contato" class="cursor-pointer">Contato</button>
+            <button data-scroll-to="contato" class="cursor-pointer"
+              >Contato</button
+            >
           </li>
         </ul>
       </nav>
@@ -61,7 +70,6 @@ import Glass from '../glass/Glass.astro';
     width: calc(100% + 62px);
     height: calc(100% + 16px);
   }
-
 </style>
 
 <script>
@@ -117,13 +125,17 @@ import Glass from '../glass/Glass.astro';
   }
 
   // Smooth scroll for nav buttons (desktop + mobile menu)
-  document.querySelectorAll<HTMLButtonElement>("[data-scroll-to]").forEach((btn) => {
-    btn.addEventListener("click", () => {
-      const targetId = btn.dataset.scrollTo;
-      if (targetId) {
-        closeMenu();
-        document.getElementById(targetId)?.scrollIntoView({ behavior: "smooth" });
-      }
+  document
+    .querySelectorAll<HTMLButtonElement>("[data-scroll-to]")
+    .forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const targetId = btn.dataset.scrollTo;
+        if (targetId) {
+          closeMenu();
+          document
+            .getElementById(targetId)
+            ?.scrollIntoView({ behavior: "smooth" });
+        }
+      });
     });
-  });
 </script>
