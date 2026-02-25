@@ -11,3 +11,8 @@ needs to be imported from fontsource to work, but these fonts doesn't correspond
   --font-sans: "Poppins", system-ui, -apple-system, sans-serif;
   --font-display: "Fjalla One", system-ui, sans-serif;
 }
+
+::selection {
+  background-color: #5d60f025;
+  color: #4142A6;
+}
