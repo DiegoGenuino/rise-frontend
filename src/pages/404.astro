@@ -31,28 +31,58 @@ import mousePointer from "../assets/icons/mouse-pointer.svg";
 
   /* ── Entrance keyframes ── */
   @keyframes fade-up {
-    from { opacity: 0; transform: translateY(28px); }
-    to   { opacity: 1; transform: translateY(0); }
+    from {
+      opacity: 0;
+      transform: translateY(28px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
 
   @keyframes fade-in-scale {
-    from { opacity: 0; transform: scale(0.92); }
-    to   { opacity: 1; transform: scale(1); }
+    from {
+      opacity: 0;
+      transform: scale(0.92);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
   }
 
   @keyframes slide-in-left {
-    from { opacity: 0; transform: rotate(150deg) translateX(60px); }
-    to   { opacity: 1; transform: rotate(150deg) translateX(0); }
+    from {
+      opacity: 0;
+      transform: rotate(150deg) translateX(60px);
+    }
+    to {
+      opacity: 1;
+      transform: rotate(150deg) translateX(0);
+    }
   }
 
   @keyframes slide-in-bottom {
-    from { opacity: 0; transform: translateY(40px); }
-    to   { opacity: 1; transform: translateY(0); }
+    from {
+      opacity: 0;
+      transform: translateY(40px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
 
   @keyframes fade-in-right {
-    from { opacity: 0; transform: translateX(20px); }
-    to   { opacity: 1; transform: translateX(0); }
+    from {
+      opacity: 0;
+      transform: translateX(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
   }
 
   /* ── Entrance orchestration (activated when data-ready="true") ── */
@@ -82,8 +112,15 @@ import mousePointer from "../assets/icons/mouse-pointer.svg";
 
   /* ── Looping animations ── */
   @keyframes glow-pulse {
-    0%, 100% { opacity: 0.5; transform: scale(0.9); }
-    50%      { opacity: 0.8; transform: scale(1.1); }
+    0%,
+    100% {
+      opacity: 0.5;
+      transform: scale(0.9);
+    }
+    50% {
+      opacity: 0.8;
+      transform: scale(1.1);
+    }
   }
 
   .btn-glow {
@@ -92,88 +129,164 @@ import mousePointer from "../assets/icons/mouse-pointer.svg";
 
   /* ── Responsive: landscape phones ── */
   @media (orientation: landscape) and (max-height: 500px) {
-    .page-title    { font-size: 4rem; padding: 0.5rem; }
-    .page-subtitle { font-size: 1.1rem; margin-bottom: 1.5rem; }
-    .page-center   { margin-top: 0; gap: 0; }
-    .page-header   { top: 0.5rem; right: 0.5rem; }
-    .tape-top      { width: 300px; top: -5rem; left: -4rem; }
-    .tape-bottom   { bottom: -25rem; }
+    .page-title {
+      font-size: 4rem;
+      padding: 0.5rem;
+    }
+    .page-subtitle {
+      font-size: 1.1rem;
+      margin-bottom: 1.5rem;
+    }
+    .page-center {
+      margin-top: 0;
+      gap: 0;
+    }
+    .page-header {
+      top: 0.5rem;
+      right: 0.5rem;
+    }
+    .tape-top {
+      width: 300px;
+      top: -5rem;
+      left: -4rem;
+    }
+    .tape-bottom {
+      bottom: -25rem;
+    }
   }
 
   /* ── Responsive: tablets (~760px) ── */
   @media (min-width: 700px) and (max-width: 900px) {
-    .tape-bottom { bottom: -12rem; }
+    .tape-bottom {
+      bottom: -12rem;
+    }
   }
 
   /* ── Responsive: desktop (>900px) ── */
   @media (min-width: 901px) {
-    .tape-bottom { bottom: clamp(-45rem, -40vw, -15rem); }
+    .tape-bottom {
+      bottom: clamp(-45rem, -40vw, -15rem);
+    }
   }
 
   /* ── Reduced motion: skip animations, show everything ── */
   @media (prefers-reduced-motion: reduce) {
-    .scene[data-ready="false"] .anim-el { opacity: 1; }
-    .scene[data-ready="true"] .anim-el  { animation: none !important; opacity: 1; }
+    .scene[data-ready="false"] .anim-el {
+      opacity: 1;
+    }
+    .scene[data-ready="true"] .anim-el {
+      animation: none !important;
+      opacity: 1;
+    }
   }
 </style>
 
-<BaseLayout title="Página não encontrada :(" description="Página não encontrada.">
+<BaseLayout
+  seo={{
+    title: "Página não encontrada",
+    description:
+      "Oops! A página que você está procurando não existe ou foi movida. Volte para a página inicial da Rise Idiomas.",
+    type: "website",
+    image: "/favicon.svg",
+  }}
+>
+  <!-- Prevent 404 pages from destroying SEO ranking by keeping search engines out, but allow them to follow links back home -->
+  <Fragment slot="head">
+    <meta name="robots" content="noindex, follow" />
+  </Fragment>
+
   <main
     class="scene relative h-screen w-full overflow-hidden flex flex-col items-center justify-center bg-[#F4F4F5]"
     data-ready="false"
   >
-
     <!-- HTTP Error Badge -->
-    <div class="anim-el anim-badge absolute top-4 right-4 md:top-8 md:right-8 z-20 flex gap-1 md:gap-2 items-center font-mono font-bold text-sm md:text-lg text-black page-header">
+    <div
+      class="anim-el anim-badge absolute top-4 right-4 md:top-8 md:right-8 z-20 flex gap-1 md:gap-2 items-center font-mono font-bold text-sm md:text-lg text-black page-header"
+    >
       <span>http</span>
       <span>error</span>
       <span class="text-2xl md:text-4xl leading-none">404</span>
     </div>
 
     <!-- Center Content -->
-    <div class="z-10 text-center flex flex-col items-center gap-2 relative -mt-10 md:-mt-25 page-center">
-      <h1 class="anim-el anim-title text-7xl md:text-[12rem] leading-none font-mono tracking-tight font-sans p-4 text-[#1a1a1a] page-title">
+    <div
+      class="z-10 text-center flex flex-col items-center gap-2 relative -mt-10 md:-mt-25 page-center"
+    >
+      <h1
+        class="anim-el anim-title text-7xl md:text-[12rem] leading-none font-mono tracking-tight font-sans p-4 text-[#1a1a1a] page-title"
+      >
         Oops !
       </h1>
-      <p class="anim-el anim-subtitle font-mono text-2xl text-black/80 tracking-wide mb-8 md:mb-12 page-subtitle">
+      <p
+        class="anim-el anim-subtitle font-mono text-2xl text-black/80 tracking-wide mb-8 md:mb-12 page-subtitle"
+      >
         Página não encontrada
       </p>
 
       <!-- CTA Button -->
       <div class="anim-el anim-cta relative group z-10">
-        <div class="absolute inset-0 bg-[#5D5DFF] rounded-full blur-[20px] opacity-75 btn-glow pointer-events-none"></div>
-        <a href="/" class="relative block px-8 md:px-12 py-2.5 md:py-3 bg-[#6363FF]/74 text-white rounded-full font-medium text-base md:text-lg transition-all shadow-lg">
+        <div
+          class="absolute inset-0 bg-[#5D5DFF] rounded-full blur-[20px] opacity-75 btn-glow pointer-events-none"
+        >
+        </div>
+        <a
+          href="/"
+          class="relative block px-8 md:px-12 py-2.5 md:py-3 bg-[#6363FF]/74 text-white rounded-full font-medium text-base md:text-lg transition-all shadow-lg"
+        >
           Home
         </a>
-        <div class="absolute -right-5 -bottom-2.5 w-8 h-8 pointer-events-none drop-shadow-md z-30">
-          <Image src={mousePointer} alt="" width={28} height={29} loading="eager" />
+        <div
+          class="absolute -right-5 -bottom-2.5 w-8 h-8 pointer-events-none drop-shadow-md z-30"
+        >
+          <Image
+            src={mousePointer}
+            alt=""
+            width={28}
+            height={29}
+            loading="eager"
+          />
         </div>
       </div>
     </div>
 
     <!-- Caution Tape: Top Left -->
-    <div class="anim-el anim-tape-top absolute -top-20 -left-25 md:-top-40 md:-left-50 w-[300px] md:w-[600px] pointer-events-none z-0 blur-[2px] tape-top">
-      <Image src={cautionTape} alt="" class="w-full h-full object-contain" loading="eager" />
+    <div
+      class="anim-el anim-tape-top absolute -top-20 -left-25 md:-top-40 md:-left-50 w-[300px] md:w-[600px] pointer-events-none z-0 blur-[2px] tape-top"
+    >
+      <Image
+        src={cautionTape}
+        alt=""
+        class="w-full h-full object-contain"
+        loading="eager"
+      />
     </div>
 
     <!-- Caution Tape: Bottom -->
-    <div class="anim-el anim-tape-bottom absolute -bottom-[2.5rem] w-full pointer-events-none z-[1] blur-[4px] md:blur-[6px] tape-bottom">
-      <Image src={cautionTape} alt="" class="w-full h-full object-contain" loading="eager" />
+    <div
+      class="anim-el anim-tape-bottom absolute -bottom-[2.5rem] w-full pointer-events-none z-[1] blur-[4px] md:blur-[6px] tape-bottom"
+    >
+      <Image
+        src={cautionTape}
+        alt=""
+        class="w-full h-full object-contain"
+        loading="eager"
+      />
     </div>
-
   </main>
 
   <!-- Reveal only after images are decoded -->
   <script>
-    const scene = document.querySelector<HTMLElement>('.scene');
+    const scene = document.querySelector(".scene") as HTMLElement;
     if (scene) {
-      const imgs = Array.from(scene.querySelectorAll('img'));
-      const ready = () => scene.dataset.ready = 'true';
+      const imgs = Array.from(scene.querySelectorAll("img"));
+      const ready = () => (scene.dataset.ready = "true");
 
-      if (imgs.length === 0) { ready(); }
-      else {
-        Promise.all(imgs.map(img => img.decode().catch(() => {})))
-          .then(ready);
+      if (imgs.length === 0) {
+        ready();
+      } else {
+        Promise.all(imgs.map((img) => img.decode().catch(() => {}))).then(
+          ready,
+        );
         // Safety net: reveal after 1.2s regardless
         setTimeout(ready, 1200);
       }
