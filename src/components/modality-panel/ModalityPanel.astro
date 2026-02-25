@@ -1,6 +1,7 @@
 ---
 import { Image } from "astro:assets";
 import Glass from "../glass/Glass.astro";
+import ModalityPanelOverlay from "./ModalityPanelOverlay.astro";
 
 // Props for flexible modality panel
 export interface Props {
@@ -8,7 +9,10 @@ export interface Props {
   subtitle: string;
   description: string;
   buttonLabel?: string;
-  buttonOnClick?: string;
+  modalityId?: string; // used to identify the which overlay to show
+  overlayFeatures?: string[];
+  overlayTagline?: string;
+  overlayDescription?: string;
   images: Array<{
     src: any; // Astro ImageMetadata
     alt: string;
@@ -34,7 +38,10 @@ const {
   subtitle,
   description,
   buttonLabel = "Saiba Mais",
-  buttonOnClick,
+  modalityId,
+  overlayFeatures,
+  overlayTagline,
+  overlayDescription,
   images,
   titleClass = "title text-5xl sm:text-6xl lg:text-7xl font-bold text-[#28286F] leading-tight",
   descriptionClass = "text-xl sm:text-2xl text-[#2A2286]/95 leading-relaxed max-w-xl",
@@ -43,80 +50,11 @@ const {
   imageContainerClass = "flex justify-center lg:justify-end",
   customStyles,
 } = Astro.props;
+
+const hasOverlay = modalityId && overlayFeatures && overlayFeatures.length > 0;
 ---
 
 {customStyles && <style set:html={customStyles} />}
-
-<!-- 'saiba mais' button style -->
-<style>
-  .liquid-glass-btn-pure {
-    position: relative;
-    /* Translucent bg with radial highlighting to simulate surface tension */
-    background: radial-gradient(
-      150% 150% at 50% 0%,
-      rgba(255, 255, 255, 0.25) 0%,
-      rgba(255, 255, 255, 0.05) 100%
-    );
-
-    /* Real glass distortion */
-    backdrop-filter: blur(12px) saturate(160%);
-    -webkit-backdrop-filter: blur(12px) saturate(160%);
-
-    /* Faint white border with low opacity */
-    border: 1px solid rgba(255, 255, 255, 0.35);
-
-    /* Inner highlight at top, inner shading at bottom + Soft outer shadow floating depth */
-    box-shadow:
-      inset 0 2px 4px rgba(255, 255, 255, 0.4),
-      inset 0 -2px 6px rgba(0, 0, 0, 0.05),
-      0 12px 32px rgba(30, 30, 80, 0.15);
-
-    /* Highly rounded corners */
-    border-radius: 9999px;
-
-    color: #28286f;
-    overflow: hidden;
-    isolation: isolate;
-    transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
-  }
-
-  /* Simulate volumetric liquid highlight */
-  .liquid-glass-btn-pure::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    border-radius: inherit;
-    background: radial-gradient(
-      ellipse at 50% 0%,
-      rgba(255, 255, 255, 0.45) 0%,
-      rgba(255, 255, 255, 0) 50%
-    );
-    pointer-events: none;
-    z-index: -1;
-  }
-
-  /* Hover state constraints */
-  .liquid-glass-btn-pure:hover {
-    filter: brightness(1.08); /* Increase brightness slightly */
-    backdrop-filter: blur(16px) saturate(180%); /* Increase blur subtly */
-    -webkit-backdrop-filter: blur(16px) saturate(180%);
-    box-shadow:
-      inset 0 3px 6px rgba(255, 255, 255, 0.8),
-      inset 0 -2px 6px rgba(0, 0, 0, 0.05),
-      0 16px 40px rgba(30, 30, 80, 0.2),
-      0 0 24px rgba(255, 255, 255, 0.5); /* Soft glow around button */
-    transform: translateY(-2px);
-  }
-
-  /* Active state soft press */
-  .liquid-glass-btn-pure:active {
-    box-shadow:
-      inset 0 2px 4px rgba(255, 255, 255, 0.5),
-      inset 0 -1px 3px rgba(0, 0, 0, 0.05),
-      0 6px 16px rgba(30, 30, 80, 0.1); /* Reduce shadow slightly */
-    transform: translateY(1px);
-  }
-</style>
 
 <div class={panelClass}>
   <div class={contentClass}>
@@ -129,8 +67,8 @@ const {
       buttonLabel && (
         <div class="hidden lg:block">
           <button
-            class="liquid-glass-btn-pure px-12 py-4 font-bold text-lg tracking-wide flex items-center justify-center outline-none w-fit"
-            onclick={buttonOnClick}
+            class="liquid-glass-btn-pure px-12 py-4 font-bold text-lg tracking-wide flex items-center justify-center outline-none w-fit mt-8"
+            data-saiba-mais
           >
             <span class="relative z-10">{buttonLabel}</span>
           </button>
@@ -179,9 +117,51 @@ const {
   <div class="w-full flex justify-center lg:hidden mt-2 p-4">
     <button
       class="liquid-glass-btn-pure px-12 py-4 font-bold text-lg tracking-wide flex items-center justify-center outline-none"
-      onclick={buttonOnClick}
+      data-saiba-mais
     >
       <span class="relative z-10">{buttonLabel}</span>
     </button>
   </div>
 </div>
+
+{/* Overlay rendered as child of ModalityPanel */}
+{
+  hasOverlay && (
+    <ModalityPanelOverlay
+      modalityId={modalityId}
+      title={title}
+      tagline={overlayTagline || subtitle}
+      description={overlayDescription}
+      features={overlayFeatures}
+    />
+  )
+}
+
+<!-- 'saiba mais' button style -->
+<style>
+  .liquid-glass-btn-pure {
+    position: relative;
+    background: transparent;
+    backdrop-filter: blur(0.3px);
+    /* Floating outer shadow */
+    box-shadow: 0 4px 12px rgba(30, 30, 80, 0.123);
+
+    /* Highly rounded corners for the shadow shape */
+    border-radius: 9999px;
+    font-weight: 400;
+    color: #28286f;
+    transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+  }
+
+  /* Hover state */
+  .liquid-glass-btn-pure:hover {
+    box-shadow: 0 8px 24px rgba(30, 30, 80, 0.1);
+    transform: translateY(-2px);
+  }
+
+  /* Active state */
+  .liquid-glass-btn-pure:active {
+    box-shadow: 0 2px 8px rgba(30, 30, 80, 0.05);
+    transform: translateY(1px);
+  }
+</style>

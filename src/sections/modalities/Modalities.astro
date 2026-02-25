@@ -38,14 +38,18 @@ import kidsSun from "../../assets/images/modalities-section/kids-panel-sun-eleme
 ---
 
 <style>
+  .tab-panels-wrapper {
+    display: grid;
+    align-items: stretch;
+  }
+
   .tab-panel {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
+    grid-area: 1 / 1;
     opacity: 0;
     pointer-events: none;
     visibility: hidden;
+    display: flex;
+    flex-direction: column;
   }
 
   .tab-panel.active {
@@ -81,17 +85,17 @@ import kidsSun from "../../assets/images/modalities-section/kids-panel-sun-eleme
 
 <section
   id="modalidades"
-  class="background relative h-screen flex flex-col z-10"
+  class="background relative min-h-[100svh] lg:h-screen lg:min-h-0 flex flex-col z-10"
   aria-labelledby="modalidades-title"
 >
   <div
-    class="max-w-7xl mx-auto w-full h-full flex flex-col px-8 py-8 sm:px-12 md:px-16 lg:px-20 lg:gap-12"
+    class="max-w-7xl mx-auto w-full h-full flex flex-col gap-2 px-8 py-8 sm:px-12 md:px-16 lg:px-20 lg:gap-12"
   >
     <!-- Tab Navigation -->
     <ModalityNavbar />
 
     <!-- Tab Panels Container -->
-    <div class="relative flex-1 w-full">
+    <div class="relative flex-1 w-full tab-panels-wrapper">
       <!-- Executivo Panel -->
       <div
         class="tab-panel active"
@@ -105,6 +109,14 @@ import kidsSun from "../../assets/images/modalities-section/kids-panel-sun-eleme
           subtitle="Confiança & Destaque."
           description="Foco em nuances culturais, diplomacia corporativa e técnicas de persuasão em inglês avançado."
           descriptionClass="text-xl sm:text-2xl text-[#2A2286] leading-relaxed max-w-xl"
+          modalityId="executivo"
+          overlayDescription="Esse curso foi desenvolvido para líderes e profissionais que precisam de total confiança em negociações globais. Domine o inglês com foco em nuances culturais e técnicas de persuasão para se destacar no mercado internacional."
+          overlayFeatures={[
+            "Nuances culturais e diplomacia corporativa",
+            "Técnicas de persuasão em inglês avançado",
+            "Preparação para reuniões e apresentações internacionais",
+            "Vocabulário especializado para negócios",
+          ]}
           customStyles={`
               .exec-element { cursor: pointer; }
             `}
@@ -135,6 +147,14 @@ import kidsSun from "../../assets/images/modalities-section/kids-panel-sun-eleme
           title="ACADÊMICO"
           subtitle="Domínio da Linguagem."
           description="Foco no domínio da linguagem técnica para fins escolares e universitários."
+          modalityId="academico"
+          overlayDescription="Pensado exclusivamente para quem busca brilhar no exterior. Esse programa prepara você para a vida internacional, desenvolvendo o domínio da linguagem técnica, produção de artigos e leitura crítica em nível de excelência."
+          overlayFeatures={[
+            "Linguagem técnica para fins escolares e universitários",
+            "Produção e compreensão de textos acadêmicos",
+            "Preparação para intercâmbios e estudos no exterior",
+            "Conversação e fluência para o dia a dia acadêmico",
+          ]}
           customStyles={`
             .acad-mask { -webkit-mask-image: linear-gradient(to bottom, black 80%, transparent 100%); mask-image: linear-gradient(to bottom, black 80%, transparent 100%); }
           `}
@@ -173,6 +193,14 @@ import kidsSun from "../../assets/images/modalities-section/kids-panel-sun-eleme
           title="JURÍDICO"
           subtitle="Precisão Técnica."
           description="Terminologia jurídica, interpretação de contratos e comunicação profissional para o direito internacional."
+          modalityId="juridico"
+          overlayDescription="Criado sob medida para advogados e estudantes de Direito. Aqui você domina a terminologia jurídica essencial, a interpretação de contratos complexos e a comunicação assertiva para atuar com segurança no Direito Internacional."
+          overlayFeatures={[
+            "Terminologia jurídica em inglês",
+            "Interpretação de contratos internacionais",
+            "Comunicação profissional para direito internacional",
+            "Redação de documentos jurídicos em inglês",
+          ]}
           customStyles={`
             .juridico-mask { -webkit-mask-image: linear-gradient(to bottom, black 85%, transparent 100%); mask-image: linear-gradient(to bottom, black 85%, transparent 100%); }
           `}
@@ -200,6 +228,14 @@ import kidsSun from "../../assets/images/modalities-section/kids-panel-sun-eleme
           title="CURSOS PREPARATÓRIOS"
           subtitle="Visão Internacional."
           description="Sua proficiência comprovada pelas<br class='hidden md:block'/>instituições mais respeitadas do<br class='hidden md:block'/>mundo."
+          modalityId="preparatorio"
+          overlayDescription="Projetado para quem precisa certificar seu nível de inglês. Preparamos você com técnicas precisas e simulações reais para garantir sua proficiência nas provas de Cambridge e Michigan, abrindo grandes portas pelo mundo todo."
+          overlayFeatures={[
+            "Preparação para Cambridge e Michigan",
+            "Proficiência comprovada internacionalmente",
+            "Simulados e técnicas de prova avançadas",
+            "Material didático oficial das certificadoras",
+          ]}
           images={[
             {
               src: prepStudent,
@@ -244,6 +280,14 @@ import kidsSun from "../../assets/images/modalities-section/kids-panel-sun-eleme
           titleClass="title text-6xl sm:text-7xl lg:text-8xl font-bold text-[#28286F] leading-tight"
           subtitle="Fluência & Cultura."
           description="Inglês dinâmico com foco em cultura pop, tecnologia e preparação para o mundo globalizado."
+          modalityId="teens"
+          overlayDescription="Esse programa foi feito para adolescentes que querem se conectar com o mundo de maneira envolvente. Desenvolvemos a fluência explorando cultura pop, tecnologia e temas globais de um jeito dinâmico."
+          overlayFeatures={[
+            "Inglês dinâmico com cultura pop e tecnologia",
+            "Preparação para o mundo globalizado",
+            "Atividades interativas e engajantes",
+            "Desenvolvimento de confiança na comunicação",
+          ]}
           customStyles={`
             @keyframes teensBlink { 0%, 95% { opacity: 0; } 95.01%, 98% { opacity: 1; } 98.01%, 100% { opacity: 0; } }
             @keyframes teensBlinkHide { 0%, 95% { opacity: 1; } 95.01%, 98% { opacity: 0; } 98.01%, 100% { opacity: 1; } }
@@ -311,6 +355,14 @@ import kidsSun from "../../assets/images/modalities-section/kids-panel-sun-eleme
           titleClass="title text-6xl sm:text-5xl lg:text-8xl font-bold text-[#28286F] leading-tight md:whitespace-nowrap"
           subtitle="Lúdico & Natural."
           description="Metodologia lúdica e interativa para crianças desenvolverem fluência de forma natural e divertida."
+          modalityId="kids"
+          overlayDescription="Desenvolvido com carinho para os pequenos, nosso ensino foca na descoberta. Através de uma abordagem lúdica e 100% interativa, as crianças constroem a fluência de maneira natural, leve e extremamente divertida."
+          overlayFeatures={[
+            "Metodologia lúdica e interativa",
+            "Fluência desenvolvida de forma natural",
+            "Atividades divertidas e educativas",
+            "Acompanhamento individualizado do progresso",
+          ]}
           images={[
             {
               src: kidsFrame1,
@@ -367,7 +419,10 @@ import kidsSun from "../../assets/images/modalities-section/kids-panel-sun-eleme
   import { initKidExpressions } from "../../scripts/kidsAnimations.js";
   import { initExecAnimations } from "../../scripts/execAnimations.js";
 
+  import { initModalityOverlay } from "../../scripts/modalityOverlay.js";
+
   initModalidadesTabs();
   initKidExpressions();
   initExecAnimations();
+  initModalityOverlay();
 </script>

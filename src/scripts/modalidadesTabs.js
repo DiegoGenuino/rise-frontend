@@ -222,4 +222,9 @@ export function initModalidadesTabs() {
 
   // Start the autoplay loop when the script initializes
   startAutoPlay();
+
+  // Stop autoplay when a "Saiba Mais" overlay is opened
+  document.addEventListener('modality-overlay-opened', () => {
+    stopAutoPlay();
+  });
 }
