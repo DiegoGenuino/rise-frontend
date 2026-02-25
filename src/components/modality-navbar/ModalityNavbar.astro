@@ -19,17 +19,9 @@ import KidsIcon from "../../assets/icons/modality-navbar-kit/navbar-icon-kids.sv
     z-index: 20;
     transition: padding 0.3s ease;
 
-    /* PURE CSS LIQUID GLASS EFFECT */
-    /* Translucent bg with radial highlighting to simulate surface tension */
-    background: radial-gradient(
-      150% 150% at 50% 0%,
-      rgba(255, 255, 255, 0.25) 0%,
-      rgba(255, 255, 255, 0.05) 100%
-    );
-
     /* Real glass distortion */
-    backdrop-filter: blur(12px) saturate(160%);
-    -webkit-backdrop-filter: blur(12px) saturate(160%);
+    backdrop-filter: blur(0.3px) saturate(160%);
+    -webkit-backdrop-filter: blur(0.5px) saturate(160%);
 
     /* Faint white border with low opacity */
     border: 1px solid rgba(255, 255, 255, 0.35);
@@ -56,19 +48,6 @@ import KidsIcon from "../../assets/icons/modality-navbar-kit/navbar-icon-kids.sv
     z-index: -1;
   }
 
-  /* Animated sliding pill */
-  .tab-indicator {
-    position: absolute;
-    left: var(--indicator-left);
-    width: var(--indicator-width);
-    border-radius: 9999px;
-    pointer-events: none;
-    z-index: 1;
-    /* Solid bright white pill */
-    background: rgba(255, 255, 255, 0.95);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); /* slight depth so it sits above the glass */
-  }
-
   /* Tab Buttons */
   .tab-button {
     position: relative;
@@ -76,12 +55,13 @@ import KidsIcon from "../../assets/icons/modality-navbar-kit/navbar-icon-kids.sv
     border-radius: 9999px;
     border: none;
     background: transparent;
-    font-weight: 500;
+    font-weight: 400;
+    -webkit-text-stroke: 0px transparent;
     color: rgba(30, 30, 80, 0.65);
     white-space: nowrap;
     cursor: pointer;
     letter-spacing: 0.02em;
-    transition: all 0.3s ease;
+    transition: all 0.3s ease-in-out;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -89,7 +69,7 @@ import KidsIcon from "../../assets/icons/modality-navbar-kit/navbar-icon-kids.sv
 
   .tab-button.active {
     color: #28286f;
-    font-weight: 700;
+    -webkit-text-stroke: 0.2px #28286f;
   }
 
   .tab-button:hover:not(.active) {
@@ -105,44 +85,49 @@ import KidsIcon from "../../assets/icons/modality-navbar-kit/navbar-icon-kids.sv
   .navbar-glass {
     padding: 0.25rem;
   }
-  .tab-indicator {
-    top: 0.25rem;
-    bottom: 0.25rem;
-  }
   .tab-button {
     /* Responsive mobile squares to prevent horizontal overflow on <450px screens */
-    width: 2.75rem;
-    height: 2.75rem;
+    width: 3.75rem;
+    height: 3.75rem;
     padding: 0;
     margin: 0 0.05rem;
     border-radius: 9999px;
   }
 
-  /* 'sm' breakpoint (~640px) */
-  @media (min-width: 640px) {
+  .mobile-icon {
+    width: 3.75rem;
+    height: 3.75rem;
+    filter: grayscale(100%) blur(0.8px);
+    transition: all 0.35s cubic-bezier(0.25, 1, 0.5, 1);
+  }
+
+  .tab-button.active .mobile-icon {
+    filter: grayscale(0%);
+  }
+
+  /* 'sm' breakpoint (~768px) */
+  @media (max-width: 768px) {
     .navbar-glass {
-      padding: 0.375rem;
-    }
-    .tab-indicator {
-      top: 0.375rem;
-      bottom: 0.375rem;
+      padding: 0.6rem;
     }
     .tab-button {
       width: 3.25rem;
       height: 3.25rem;
       margin: 0 0.125rem;
     }
+
+    .mobile-icon {
+      width: 3rem;
+      height: 3rem;
+    }
   }
 
   @media (min-width: 768px) {
     .navbar-glass {
-      padding: 0.4rem;
+      padding: 0.6rem;
     }
-    .tab-indicator {
-      top: 0.4rem;
-      bottom: 0.4rem;
-    }
-    .tab-button {
+    .tab-button,
+    .tab-button.active {
       width: auto;
       height: auto;
       padding: 0.65rem 1.25rem;
@@ -155,11 +140,8 @@ import KidsIcon from "../../assets/icons/modality-navbar-kit/navbar-icon-kids.sv
     .navbar-glass {
       padding: 0.5rem;
     }
-    .tab-indicator {
-      top: 0.5rem;
-      bottom: 0.5rem;
-    }
-    .tab-button {
+    .tab-button,
+    .tab-button.active {
       width: auto;
       height: auto;
       padding: 0.75rem 1.75rem;
@@ -172,11 +154,8 @@ import KidsIcon from "../../assets/icons/modality-navbar-kit/navbar-icon-kids.sv
     .navbar-glass {
       padding: 0.625rem;
     }
-    .tab-indicator {
-      top: 0.625rem;
-      bottom: 0.625rem;
-    }
-    .tab-button {
+    .tab-button,
+    .tab-button.active {
       width: auto;
       height: auto;
       padding: 0.875rem 2.25rem;
@@ -199,13 +178,7 @@ import KidsIcon from "../../assets/icons/modality-navbar-kit/navbar-icon-kids.sv
   role="tablist"
   aria-label="Modalidades de ensino"
 >
-  <div
-    class="navbar-glass"
-    data-tab-container
-    style="--indicator-width: 0px; --indicator-left: 0px;"
-  >
-    <div class="tab-indicator" data-tab-indicator aria-hidden="true"></div>
-
+  <div class="navbar-glass" data-tab-container>
     <button
       class="tab-button active"
       role="tab"
@@ -218,7 +191,7 @@ import KidsIcon from "../../assets/icons/modality-navbar-kit/navbar-icon-kids.sv
       <Image
         src={ExecIcon}
         alt="Executivo"
-        class="w-[44px] h-[44px] md:hidden object-cover rounded-full"
+        class="mobile-icon md:hidden object-cover rounded-full"
       />
     </button>
     <button
@@ -233,7 +206,7 @@ import KidsIcon from "../../assets/icons/modality-navbar-kit/navbar-icon-kids.sv
       <Image
         src={AcadIcon}
         alt="Acadêmico"
-        class="w-[44px] h-[44px] md:hidden object-cover rounded-full"
+        class="mobile-icon md:hidden object-cover rounded-full"
       />
     </button>
     <button
@@ -248,7 +221,7 @@ import KidsIcon from "../../assets/icons/modality-navbar-kit/navbar-icon-kids.sv
       <Image
         src={JuridicoIcon}
         alt="Jurídico"
-        class="w-[44px] h-[44px] md:hidden object-cover rounded-full"
+        class="mobile-icon md:hidden object-cover rounded-full"
       />
     </button>
     <button
@@ -263,7 +236,7 @@ import KidsIcon from "../../assets/icons/modality-navbar-kit/navbar-icon-kids.sv
       <Image
         src={PrepIcon}
         alt="Preparatório"
-        class="w-[44px] h-[44px] md:hidden object-cover rounded-full"
+        class="mobile-icon md:hidden object-cover rounded-full"
       />
     </button>
     <button
@@ -278,7 +251,7 @@ import KidsIcon from "../../assets/icons/modality-navbar-kit/navbar-icon-kids.sv
       <Image
         src={TeensIcon}
         alt="Teens"
-        class="w-[44px] h-[44px] md:hidden object-cover rounded-full"
+        class="mobile-icon md:hidden object-cover rounded-full"
       />
     </button>
     <button
@@ -293,7 +266,7 @@ import KidsIcon from "../../assets/icons/modality-navbar-kit/navbar-icon-kids.sv
       <Image
         src={KidsIcon}
         alt="Kids"
-        class="w-[44px] h-[44px] md:hidden object-cover rounded-full"
+        class="mobile-icon md:hidden object-cover rounded-full"
       />
     </button>
   </div>

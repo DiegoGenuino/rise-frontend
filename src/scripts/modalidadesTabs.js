@@ -4,9 +4,8 @@ export function initModalidadesTabs() {
   const container = document.querySelector('[data-tab-container]');
   const tabs = document.querySelectorAll('.tab-button');
   const panels = document.querySelectorAll('[role="tabpanel"]');
-  const indicator = document.querySelector('[data-tab-indicator]');
 
-  if (!tabs.length || !panels.length || !indicator || !container) {
+  if (!tabs.length || !panels.length || !container) {
     console.error("Tab elements not found");
     return;
   }
@@ -14,33 +13,7 @@ export function initModalidadesTabs() {
   let currentTab = tabs[0];
   let isAnimating = false;
 
-  // ── Indicator position ──────────────────────────────────────────────────────
-  function updateIndicator(tab, animate = true) {
-    const tabRect = tab.getBoundingClientRect();
-    const containerRect = container.getBoundingClientRect();
-    const left = tabRect.left - containerRect.left;
-    const width = tabRect.width;
 
-    if (animate) {
-      // GSAP animates the CSS vars; the CSS transition handles the pill visuals
-      gsap.to(container, {
-        '--indicator-left': `${left}px`,
-        '--indicator-width': `${width}px`,
-        duration: 0.5,
-        ease: "power4.out"
-      });
-    } else {
-      gsap.set(container, {
-        '--indicator-left': `${left}px`,
-        '--indicator-width': `${width}px`
-      });
-    }
-  }
-
-  // Initialise indicator position after layout settles
-  setTimeout(() => {
-    updateIndicator(currentTab, false);
-  }, 50);
 
   // ── Direction-aware crossfade + slide ───────────────────────────────────────
   function switchTab(newTab) {
@@ -60,9 +33,6 @@ export function initModalidadesTabs() {
     currentTab.classList.remove('active');
     newTab.setAttribute('aria-selected', 'true');
     newTab.classList.add('active');
-
-    // Animate the indicator pill
-    updateIndicator(newTab, true);
 
     // Kill any in-flight tweens
     gsap.killTweensOf([oldPanel, newPanel]);
@@ -186,14 +156,6 @@ export function initModalidadesTabs() {
     });
   });
 
-  // Re-position indicator on resize
-  let resizeTimeout;
-  window.addEventListener('resize', () => {
-    clearTimeout(resizeTimeout);
-    resizeTimeout = setTimeout(() => {
-      updateIndicator(currentTab, false);
-    }, 100);
-  });
 
   // ── Autoplay functionality ────────────────────────────────────────────────────
   let autoPlayInterval;

@@ -1,5 +1,12 @@
 @import "tailwindcss";
 
+/* FIXME
+needs to be imported from fontsource to work, but these fonts doesn't correspond to the prototype.
+
+@import "@fontsource/fjalla-one";
+@import "@fontsource/poppins"; 
+*/
+
 @theme {
   --font-sans: "Poppins", system-ui, -apple-system, sans-serif;
   --font-display: "Fjalla One", system-ui, sans-serif;
