@@ -41,7 +41,7 @@ export default function EnrollmentLetter() {
     return (
         <div
             ref={containerRef}
-            className="relative w-[14rem] sm:w-[16rem] md:w-[20rem] lg:w-[25rem] h-max z-[1] pointer-events-none select-none rotate-[-5deg] shrink-0 justify-self-center"
+            className="relative w-[14rem] sm:w-[16rem] md:w-[20rem] lg:w-[25rem] h-max z-[10] pointer-events-none select-none rotate-[-5deg] shrink-0 justify-self-center lg:-translate-y-90"
         >
             <img
                 src={openLetter.src}
