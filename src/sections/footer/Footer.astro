@@ -36,13 +36,12 @@ const socialIcons = [
 ] as const;
 ---
 
-<footer class="relative z-[1] bg-white pt-12 pb-0 bottom-0 px-6">
+<footer class="relative z-[1] bg-[#fafafa]/80 pt-12 pb-0 bottom-0 px-6">
   <div class="max-w-[1200px] mx-auto">
-    <!-- logo + topics -->
     <div
-      class="grid grid-cols-1 sm:grid-cols-[auto_1fr] gap-10 sm:gap-16 mb-10 items-start"
+      class="grid grid-cols-1 gap-16 mb-10 items-start md:gap-8 md:flex md:flex-col md:items-start md:justify-center"
     >
-      <img src={riseLogo.src} alt="Rise Idiomas" class="w-20" />
+    <img src={riseLogo.src} alt="Rise Idiomas" class="w-20 select-none" />
       <div
         class="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-[auto_auto] gap-8 sm:gap-16"
       >
@@ -60,10 +59,10 @@ const socialIcons = [
       }
     </div>
 
-    <!-- bottom bar -->
+    <!-- copyright bar -->
     <div class="pb-6">
       <hr class="border-0 border-t border-[#e0e0e0] mb-4" />
-      <p class="text-center text-xs text-[#888] tracking-[0.04em]">
+      <p class="font-semibold lg:font-[400] text-center text-xs text-[#8e8e8e]/80">
         2026 RISE IDIOMAS. DESENVOLVIDO POR SUBLIME STUDIO.
       </p>
     </div>

@@ -12,8 +12,8 @@ interface Props {
 const { title, links } = Astro.props;
 ---
 
-<div>
-  <h4 class="text-lg font-bold text-[#1a1a2e] mb-4">{title}</h4>
+<div class="w-fit h-fit">
+  <h4 class="text-lg font-semibold text-[#1a1a2e] mb-4">{title}</h4>
   <div class="flex gap-8">
     {links.map((column) => (
       <ul class="list-none p-0 m-0 flex flex-col gap-2">

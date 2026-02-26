@@ -4,6 +4,7 @@ import AnnouncementBar from "../components/announcement-bar/AnnouncementBar.astr
 import Topbar from "../components/topbar/Topbar.astro";
 import Hero from "../sections/hero/Hero.astro";
 import Modalities from "../sections/modalities/Modalities.astro";
+import Testimonials from "../sections/testimonials/Testimonials.astro";
 import CTA from "../sections/cta/CTA.astro";
 import Footer from "../sections/footer/Footer.astro";
 import Analytics from "@vercel/analytics/astro";
@@ -20,7 +21,7 @@ const displayAnnouncementBar = true;
 		content: "";
 		position: fixed;
 		inset: 0;
-		/* bolinhas */
+		/* dotted bg */
 		background-image: radial-gradient(
 			rgba(0, 0, 0, 0.1) 1px,
 			transparent 1px
@@ -30,7 +31,6 @@ const displayAnnouncementBar = true;
 		pointer-events: none;
 	}
 
-	/* Make Layout background transparent so pattern shows */
 	:global(body) {
 		background-color: #f4f4f4 !important;
 	}
@@ -96,8 +96,9 @@ const displayAnnouncementBar = true;
 		>
 			<Hero />
 			<Modalities />
-			<!-- <CTA />
-			<Footer /> -->
+			<Testimonials />
+			<CTA />
+			<Footer />
 		</main>
 	</div>
 	<Analytics />
