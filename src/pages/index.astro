@@ -8,6 +8,7 @@ import Testimonials from "../sections/testimonials/Testimonials.astro";
 import CTA from "../sections/cta/CTA.astro";
 import Footer from "../sections/footer/Footer.astro";
 import Analytics from "@vercel/analytics/astro";
+import EnrollmentLetter from "../components/enrollment-letter/EnrollmentLetter.tsx";
 
 const displayAnnouncementBar = true;
 ---
@@ -97,6 +98,10 @@ const displayAnnouncementBar = true;
 			<Hero />
 			<Modalities />
 			<Testimonials />
+			<div class="flex justify-center pointer-events-none">
+				<!-- only executes this island when the user scrolls to it -->
+				<EnrollmentLetter client:visible />
+			</div>
 			<CTA />
 			<Footer />
 		</main>

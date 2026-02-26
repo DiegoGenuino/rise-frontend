@@ -3,6 +3,8 @@ import SocialMediaIcon from "../../components/footer/social-media-icon/SocialMed
 import FooterTopic from "../../components/footer/topic/FooterTopic.astro";
 import riseLogo from "../../assets/shared/rise-logo.svg";
 
+const currentYear = new Date().getFullYear();
+
 const contatoLinks = [
   [
     { label: "Instagram", url: "https://instagram.com" },
@@ -63,7 +65,7 @@ const socialIcons = [
     <div class="pb-6">
       <hr class="border-0 border-t border-[#e0e0e0] mb-4" />
       <p class="font-semibold lg:font-[400] text-center text-xs text-[#8e8e8e]/80">
-        2026 RISE IDIOMAS. DESENVOLVIDO POR SUBLIME STUDIO.
+        {currentYear} RISE IDIOMAS. DESENVOLVIDO POR SUBLIME STUDIO.
       </p>
     </div>
   </div>

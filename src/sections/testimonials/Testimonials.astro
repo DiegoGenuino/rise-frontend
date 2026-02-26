@@ -1,5 +1,106 @@
 ---
 import TestimonialCard from "../../components/testimonial-card/TestimonialCard.astro";
-//import enrollment letter images
-//import poppins for blurry bg
+import TestimonialsTypeBg from "../../components/testimonial-type-bg/TestimonialsTypeBg.astro";
+import testimonialsData from "../../data/Testimonials.json";
 ---
+
+<div
+    id="testimonials"
+    class="relative overflow-hidden h-fit py-20 lg:pb-55 lg:pt-50"
+>
+    <TestimonialsTypeBg />
+    <!-- container that has infinite scroll -->
+    <div id="testimonial-cards-container">
+        <div class="cards-track">
+            <!-- First set of cards -->
+            {
+                testimonialsData.testimonials.map((data) => (
+                    <TestimonialCard
+                        studentName={data.studentName}
+                        testimonial={data.testimonial}
+                        courseModality={data.courseModality}
+                    />
+                ))
+            }
+
+            <!-- Duplicated set of cards for infinite scroll -->
+            {
+                testimonialsData.testimonials.map((data) => (
+                    <TestimonialCard
+                        studentName={data.studentName}
+                        testimonial={data.testimonial}
+                        courseModality={data.courseModality}
+                    />
+                ))
+            }
+        </div>
+
+        <!-- Decorative second track explicitly for larger devices -->
+        <div
+            class="cards-track hidden lg:flex blur-[7px] opacity-40 pointer-events-none"
+            style="animation-direction: reverse; animation-duration: 40s;"
+        >
+            <!-- First set of decorative cards -->
+            {
+                testimonialsData.testimonials.map((data) => (
+                    <TestimonialCard
+                        studentName={data.studentName}
+                        testimonial={data.testimonial}
+                        courseModality={data.courseModality}
+                    />
+                ))
+            }
+
+            <!-- Duplicated set of decorative cards -->
+            {
+                testimonialsData.testimonials.map((data) => (
+                    <TestimonialCard
+                        studentName={data.studentName}
+                        testimonial={data.testimonial}
+                        courseModality={data.courseModality}
+                    />
+                ))
+            }
+        </div>
+    </div>
+</div>
+
+<style>
+    #testimonial-cards-container {
+        position: absolute;
+        top: -1%;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center; /* Centralized vertically */
+        z-index: 10;
+        pointer-events: none; /* So clicks on empty space pass through */
+    }
+
+    @media (min-width: 1024px) {
+        #testimonial-cards-container {
+            flex-direction: column;
+            justify-content: center; /* Centralized vertically */
+            gap: 1rem;
+        }
+    }
+
+    .cards-track {
+        display: flex;
+        gap: 6rem;
+        width: max-content;
+        animation: scrollCards 30s linear infinite;
+        padding: 0 2rem;
+        pointer-events: auto; /* Cards themselves should remain interactive */
+    }
+
+    @keyframes scrollCards {
+        0% {
+            transform: translateX(0);
+        }
+        100% {
+            transform: translateX(calc(-50% - 3rem));
+        }
+    }
+</style>

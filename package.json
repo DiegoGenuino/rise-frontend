@@ -10,11 +10,8 @@
   },
   "dependencies": {
     "@astrojs/react": "^4.4.2",
-    "@fontsource/fjalla-one": "^5.2.7",
     "@fontsource/geist-mono": "^5.2.7",
-    "@fontsource/inter": "^5.2.8",
     "@fontsource/playfair-display": "^5.2.8",
-    "@fontsource/poppins": "^5.2.7",
     "@fontsource/schoolbell": "^5.2.7",
     "@fontsource/unifrakturcook": "^5.2.8",
     "@iconify-json/akar-icons": "^1.2.7",
@@ -25,6 +22,7 @@
     "astro": "^5.17.1",
     "astro-icon": "^1.1.5",
     "gsap": "^3.14.2",
+    "react": "^19.2.4",
     "react-dom": "^19.2.4",
     "tailwindcss": "^4.1.18",
     "typewriter-effect": "^2.22.0"
