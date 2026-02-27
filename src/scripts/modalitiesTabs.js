@@ -1,6 +1,6 @@
 import { gsap } from "gsap";
 
-export function initModalidadesTabs() {
+export function initModalitiesTabs() {
   const container = document.querySelector('[data-tab-container]');
   const tabs = document.querySelectorAll('.tab-button');
   const panels = document.querySelectorAll('[role="tabpanel"]');
