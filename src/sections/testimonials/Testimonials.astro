@@ -4,26 +4,11 @@ import TestimonialsTypeBg from "../../components/testimonial-type-bg/Testimonial
 import testimonialsData from "../../data/Testimonials.json";
 ---
 
-<div
-    id="testimonials"
-    class="relative overflow-hidden h-fit py-20 lg:pb-55 lg:pt-50"
->
-    <TestimonialsTypeBg />
-    <!-- container that has infinite scroll -->
-    <div id="testimonial-cards-container">
-        <div class="cards-track">
-            <!-- First set of cards -->
-            {
-                testimonialsData.testimonials.map((data) => (
-                    <TestimonialCard
-                        studentName={data.studentName}
-                        testimonial={data.testimonial}
-                        courseModality={data.courseModality}
-                    />
-                ))
-            }
-
-            <!-- Duplicated set of cards for infinite scroll -->
+ 
+<div id="testimonials" class="overflow-hidden h-fit py-20 lg:pb-55 lg:pt-50">
+    <TestimonialsTypeBg aria-hidden="true" />
+    <div class="testimonials-carousel">
+        <div class="testimonials-track">
             {
                 testimonialsData.testimonials.map((data) => (
                     <TestimonialCard
@@ -34,12 +19,7 @@ import testimonialsData from "../../data/Testimonials.json";
                 ))
             }
         </div>
-
-        <!-- Decorative second track explicitly for larger devices -->
-        <div
-            class="cards-track reverse-track hidden lg:flex blur-[7px] opacity-40 pointer-events-none"
-        >
-            <!-- First set of decorative cards -->
+        <div aria-hidden="true" class="testimonials-track">
             {
                 testimonialsData.testimonials.map((data) => (
                     <TestimonialCard
@@ -49,8 +29,25 @@ import testimonialsData from "../../data/Testimonials.json";
                     />
                 ))
             }
+        </div>
+        
+        
+    </div>
 
-            <!-- Duplicated set of decorative cards -->
+    <!-- Decorative second track explicitly for larger devices -->
+    <div aria-hidden="true" class="testimonials-carousel testimonials-carousel--reverse">
+        <div class="testimonials-track testimonials-track--reverse">
+            {
+                testimonialsData.testimonials.map((data) => (
+                    <TestimonialCard
+                        studentName={data.studentName}
+                        testimonial={data.testimonial}
+                        courseModality={data.courseModality}
+                    />
+                ))
+            }
+        </div>
+        <div class="testimonials-track testimonials-track--reverse">
             {
                 testimonialsData.testimonials.map((data) => (
                     <TestimonialCard
@@ -64,101 +61,67 @@ import testimonialsData from "../../data/Testimonials.json";
     </div>
 </div>
 
-<script>
-    import { gsap } from "gsap";
-
-    function setupTestimonialScroll() {
-        const tracks = document.querySelectorAll(".cards-track");
-        if (!tracks.length) return;
-
-        tracks.forEach((track, index) => {
-            const htmlTrack = track as HTMLElement;
-            // Give the second decorative track a slightly slower speed for a parallax feel
-            const speed = index === 0 ? 40 : 25;
-
-            // Kill any previous animations to prevent overlap on resize
-            gsap.killTweensOf(htmlTrack);
-            gsap.set(htmlTrack, { x: 0 });
-
-            const cards = htmlTrack.children;
-            const totalCards = cards.length;
-            if (totalCards < 2) return;
-
-            const halfCount = Math.floor(totalCards / 2);
-            const firstCard = cards[0] as HTMLElement;
-            const firstDupeCard = cards[halfCount] as HTMLElement;
-
-            // Calculate exact distance between first card and its duplicate
-            // This ignores padding, gap, etc. and calculates the precise pixel loop point
-            const distance = firstDupeCard.offsetLeft - firstCard.offsetLeft;
-            const duration = distance / speed;
-
-            const isReverse = htmlTrack.classList.contains("reverse-track");
-
-            if (isReverse) {
-                gsap.fromTo(
-                    htmlTrack,
-                    { x: -distance },
-                    { x: 0, duration: duration, ease: "none", repeat: -1 },
-                );
-            } else {
-                gsap.fromTo(
-                    htmlTrack,
-                    { x: 0 },
-                    {
-                        x: -distance,
-                        duration: duration,
-                        ease: "none",
-                        repeat: -1,
-                    },
-                );
-            }
-        });
-    }
-
-    // Run on initial load and resize
-    document.addEventListener("astro:page-load", () => {
-        // Slight delay to ensure layout shifts (fonts, images) are done
-        setTimeout(setupTestimonialScroll, 100);
-    });
-
-    // Resize with a slight debounce-like behavior for recalculating
-    let resizeTimer: NodeJS.Timeout;
-    window.addEventListener("resize", () => {
-        clearTimeout(resizeTimer);
-        resizeTimer = setTimeout(setupTestimonialScroll, 150);
-    });
-
-    // Also try immediately
-    setTimeout(setupTestimonialScroll, 100);
-</script>
-
-<style>
-    #testimonial-cards-container {
+<style> 
+    .testimonial-cards-container {
         position: absolute;
         top: -1%;
-        left: 0;
         width: 100%;
         height: 100%;
         display: flex;
-        align-items: center; /* Centralized vertically */
+        align-items: center; 
         z-index: 10;
-        pointer-events: none; /* So clicks on empty space pass through */
+        pointer-events: none;
     }
 
-    @media (min-width: 1024px) {
-        #testimonial-cards-container {
-            flex-direction: column;
-            justify-content: center; /* Centralized vertically */
-            gap: 1rem;
+    .testimonials-track {
+        width: 100%;
+        will-change: transform;
+        animation: testimonials-scroll 40s linear infinite;
+        display: flex;
+        gap: 4rem;
+        /* Add padding to the right to create a gap between the last and first card. */
+        padding-right: 4rem;
+        margin: 3rem auto;
+    }
+
+    .testimonials-track--reverse {
+        animation-direction: reverse;
+        animation-duration: 60s;
+    }
+
+    .testimonials-carousel {
+        position: absolute;
+        z-index: 10;
+        display: flex;
+        margin: 0 auto;
+        padding: 4rem auto;
+        overflow: hidden;
+        width: fit-content%;
+        height: fit-content;
+        transform: translateY(-180%);
+    }
+
+    .testimonials-carousel--reverse {
+        transform: translateY(-90%);
+        z-index: 1;
+        filter: blur(7px);
+    }
+
+    @keyframes testimonials-scroll {
+        0% {
+            transform: translateX(0);
+        }
+        100% {
+            transform: translateX(-100%);
         }
     }
 
-    .cards-track {
-        display: flex;
-        gap: 6rem;
-        width: max-content;
-        padding: 0 2rem;
-        pointer-events: auto; /* Cards themselves should remain interactive */
+    @media (max-width: 524px) {
+        .testimonials-carousel {
+            transform: translateY(-150%);
+        }
+        .testimonials-carousel--reverse {
+            display: none;
+        }
     }
 </style>
