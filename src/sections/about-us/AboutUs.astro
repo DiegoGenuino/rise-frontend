@@ -1,0 +1,94 @@
+---
+import "@fontsource/schoolbell"
+import "@fontsource/fjalla-one"
+---
+<div class="carousel">
+    <div class="group">
+        <p class="item">RISE</p>
+        <p class="item">RISE</p>
+        <p class="item">RISE</p>
+        <p class="item">RISE</p>
+        <p class="item">RISE</p>
+        <p class="item">RISE</p>
+    </div>
+    <div class="group">
+        <p class="item">RISE</p>
+        <p class="item">RISE</p>
+        <p class="item">RISE</p>
+        <p class="item">RISE</p>
+        <p class="item">RISE</p>
+        <p class="item">RISE</p>
+    </div>
+</div>
+
+<div id="about-us" class="flex-col mx-5 text-[#00003A] lg:mx-12">
+    <h1 class="font-[Schoolbell] text-5xl opacity-90 mb-3 lg:text-6xl lg:mb-7">[Quem Somos?]</h1>
+    <p class="font-bold text-xl opacity-80 lg:text-3xl">A Rise Idiomas nasce da proposta de transformar a maneira como você aprende uma segunda língua, tornando essa jornada mais leve e eficaz. 
+    Nossos cursos são cuidadosamente planejados para desenvolver <em>sua</em> confiança e autonomia, proporcionando um aprendizado prático e direcionado para que você alcance seu nível ideal com clareza e segurança. <span class="bg-[#e1ff00ce]">Aqui, o foco é você e seu crescimento!</span></p>
+</div>
+
+<style>
+    .carousel{
+        display: flex;
+        overflow: hidden;
+        padding: 1rem 0;
+        border: 1px solid #4242a54d;
+    }
+
+    .group{
+        display: flex;
+        gap: 5rem;
+        padding-right: 5rem;
+        will-change: transform;
+        animation: horizontally-scroll 20s linear infinite;
+    }
+
+    .item{
+        font-family: 'Fjalla One', cursive;
+        font-size: 4.4rem;
+        color: transparent;
+        -webkit-text-stroke-width: 1px;
+        -webkit-text-stroke-color: #4242a54d;
+    }
+
+    .item:hover{
+        color: #4242a5;
+        -webkit-text-stroke-color: transparent;
+        transition: 0.5s ease-in-out;
+    }
+
+    @keyframes horizontally-scroll {
+        0% {
+            transform: translateX(0);
+        }
+        100% {
+            transform: translateX(-100%);
+        }
+    }
+
+    @media (max-width:1024px) {
+        .carousel{
+            padding: 0.4rem 0;
+        }
+
+        .item{
+            font-size: 4rem;
+        }
+    }
+
+    
+    @media (max-width:800px) {
+        .carousel{
+            padding: 0.4rem 0;
+        }
+
+        .group{
+            gap: 3rem;
+            padding-right: 3rem;
+        }
+
+        .item{
+            font-size: 3rem;
+        }
+    }
+</style>
