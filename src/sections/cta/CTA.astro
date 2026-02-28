@@ -1,119 +1,322 @@
 ---
 import Button from '../../components/button/Button.astro';
-import StudentIcon from '../../components/student-icon/StudentIcon.astro';
 
+// Student images from Figma
 const students = [
-  { src: 'https://plus.unsplash.com/premium_vector-1711987772726-64785d1bade8?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8cG9ydHJhaXR8ZW58MHx8MHx8fDA%3D', alt: 'Aluna 1' },
-  { src: 'https://plus.unsplash.com/premium_vector-1711987772726-64785d1bade8?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8cG9ydHJhaXR8ZW58MHx8MHx8fDA%3D', alt: 'Aluna 2' },
-  { src: 'https://plus.unsplash.com/premium_vector-1711987772726-64785d1bade8?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8cG9ydHJhaXR8ZW58MHx8MHx8fDA%3D', alt: 'Aluna 3' },
-  { src: 'https://plus.unsplash.com/premium_vector-1711987772726-64785d1bade8?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8cG9ydHJhaXR8ZW58MHx8MHx8fDA%3D', alt: 'Aluna 4' },
-  { src: 'https://plus.unsplash.com/premium_vector-1711987772726-64785d1bade8?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8cG9ydHJhaXR8ZW58MHx8MHx8fDA%3D', alt: 'Aluna 5' },
-  { src: 'https://plus.unsplash.com/premium_vector-1711987772726-64785d1bade8?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8cG9ydHJhaXR8ZW58MHx8MHx8fDA%3D', alt: 'Aluna 6' },
+  { src: 'https://www.figma.com/api/mcp/asset/8cdde401-8d73-4788-a9c3-997ac5c45306', alt: 'Student 1' },
+  { src: 'https://www.figma.com/api/mcp/asset/e892ca78-52b8-4ff2-97dd-82e3c1419fa4', alt: 'Student 2' },
+  { src: 'https://www.figma.com/api/mcp/asset/8ac32b70-5cd8-41c9-8a88-c80bc1aabc4d', alt: 'Student 3' },
+  { src: 'https://www.figma.com/api/mcp/asset/bdfa6a61-1564-41b1-94c1-4ca52f46e48b', alt: 'Student 4' },
+  { src: 'https://www.figma.com/api/mcp/asset/f30d9e3c-c88b-43f8-9725-bd816021d655', alt: 'Student 5' },
+  { src: 'https://www.figma.com/api/mcp/asset/6ddf4c84-8906-4584-9ff0-4e3e8ab0b215', alt: 'Student 6' },
 ];
+
+// Background shapes from Figma
+const bgVector12 = 'https://www.figma.com/api/mcp/asset/1a8f84c5-ff4d-4656-b7fe-9b7f79d8d818';
+const bgVector13 = 'https://www.figma.com/api/mcp/asset/5b0218b7-2c6f-4902-8489-b715b300d51c';
 ---
 
-<section class="relative py-40 z-1 bg-transparent overflow-hidden">
-
-  <!-- <div class="ring ring-1" aria-hidden="true"></div>
-  <div class="ring ring-2" aria-hidden="true"></div>
-  <div class="ring ring-3" aria-hidden="true"></div> -->
-
-  <div class="photos-desktop" aria-hidden="true">
-    <div class="pw pw-tl"><StudentIcon src={students[0].src} alt={students[0].alt} /></div>
-    <div class="pw pw-ml"><StudentIcon src={students[1].src} alt={students[1].alt} /></div>
-    <div class="pw pw-bl"><StudentIcon src={students[2].src} alt={students[2].alt} /></div>
-    <div class="pw pw-tr"><StudentIcon src={students[3].src} alt={students[3].alt} /></div>
-    <div class="pw pw-mr"><StudentIcon src={students[4].src} alt={students[4].alt} /></div>
-    <div class="pw pw-br"><StudentIcon src={students[5].src} alt={students[5].alt} /></div>
+<section class="cta-section relative overflow-hidden bg-transparent">
+  <!-- Background shapes -->
+  <div class="bg-shapes absolute pointer-events-none" aria-hidden="true">
+    <!-- Right background shape -->
+    <div class="absolute right-shape">
+      <img src={bgVector12} alt="" class="block max-w-none w-full h-full" />
+    </div>
+    <!-- Left background shape (rotated) -->
+    <div class="absolute left-shape">
+      <div class="rotate-wrapper">
+        <img src={bgVector13} alt="" class="block max-w-none w-full h-full" />
+      </div>
+    </div>
   </div>
 
-  <!-- center -->
-  <div class="flex flex-col items-center justify-center gap-6">
-    <h2 class="w-full text-center font-display font-bold lg:text-5xl text-[#4242A5]">
-      Preparado para dar um salto<br />na sua carreira?
+  <!-- Student images -->
+  <div class="student-images absolute inset-0 pointer-events-none" aria-hidden="true">
+    <!-- Top left -->
+    <div class="student-img student-img-1">
+      <div class="student-wrapper">
+        <img src={students[4].src} alt={students[4].alt} class="student-photo" />
+      </div>
+    </div>
+    
+    <!-- Middle left -->
+    <div class="student-img student-img-2">
+      <div class="student-wrapper">
+        <img src={students[5].src} alt={students[5].alt} class="student-photo" />
+      </div>
+    </div>
+    
+    <!-- Bottom left -->
+    <div class="student-img student-img-3">
+      <div class="student-wrapper">
+        <img src={students[3].src} alt={students[3].alt} class="student-photo" />
+      </div>
+    </div>
+    
+    <!-- Top right -->
+    <div class="student-img student-img-4">
+      <div class="student-wrapper">
+        <img src={students[0].src} alt={students[0].alt} class="student-photo" />
+      </div>
+    </div>
+    
+    <!-- Top right corner -->
+    <div class="student-img student-img-5">
+      <div class="student-wrapper">
+        <img src={students[1].src} alt={students[1].alt} class="student-photo" />
+      </div>
+    </div>
+    
+    <!-- Bottom right -->
+    <div class="student-img student-img-6">
+      <div class="student-wrapper">
+        <img src={students[2].src} alt={students[2].alt} class="student-photo" />
+      </div>
+    </div>
+  </div>
+
+  <!-- Main content -->
+  <div class="main-content relative z-10 flex flex-col items-center justify-center gap-2.5 py-32 px-6">
+    <h2 class="cta-heading text-center text-[#4242A5]">
+      Preparado para dar um salto<br />na sua carreira ?
     </h2>
-    <Button label="Fale conosco" href="#" variant="solid" />
+    <div class="cta-button">
+      <p class="button-text">Fale conosco</p>
+    </div>
   </div>
-
-  <!-- mobile photo row -->
-  <div class="photos-mobile">
-    {students.slice(0, 4).map((s) => (
-      <div class="pw-mobile"><StudentIcon src={s.src} alt={s.alt} /></div>
-    ))}
-  </div>
-
 </section>
 
 <style>
-  /* ── rings ── */
-  .ring {
-    position: absolute;
-    border-radius: 50%;
-    border: 2.5px solid rgba(90, 80, 200, 0.28);
-    pointer-events: none;
+  .cta-section {
+    position: relative;
+    min-height: 440px;
+  }
+
+  /* Background shapes */
+  .bg-shapes {
+    top: 0;
+    left: -56px;
+    right: 0;
+    bottom: 0;
     z-index: 0;
   }
-  .ring-1 { width: 320px; height: 320px; top: -110px; left: -60px; }
-  .ring-2 { width: 260px; height: 260px; bottom: -90px; left: 22%; }
-  .ring-3 { width: 300px; height: 300px; top: -100px; right: -50px; }
 
-  /* ── photo wrappers (desktop) ── */
-  .photos-desktop {
+  .right-shape {
+    width: 455px;
+    height: 484px;
+    right: -56px;
+    top: 15px;
+  }
+
+  .left-shape {
+    width: 544px;
+    height: 496px;
+    left: 0;
+    top: 45px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .rotate-wrapper {
+    transform: rotate(123deg);
+    width: 294px;
+    height: 458px;
+  }
+
+  /* Student images */
+  .student-images {
+    z-index: 1;
+  }
+
+  .student-img {
+    position: absolute;
     display: none;
   }
 
-  @media (min-width: 768px) {
-    .photos-desktop {
-      display: block;
-      position: absolute;
-      inset: 0;
-      pointer-events: none;
-      z-index: 1;
-    }
-    .cta-section { height: 280px; }
+  .student-wrapper {
+    position: relative;
+    width: 144px;
+    height: 144px;
+    border-radius: 50px;
+    box-shadow: 0px 0px 8.2px 0px #4444b2;
+    overflow: hidden;
+    background: rgba(96, 96, 195, 0.4);
   }
 
-  .pw {
+  .student-photo {
     position: absolute;
-  }
-  /* left column */
-  .pw-tl { width: 88px;  height: 104px; top: 10%;    left: 3%; }
-  .pw-ml { width: 108px; height: 126px; top: 32%;    left: 13%; }
-  .pw-bl { width: 90px;  height: 106px; bottom: 8%;  left: 3%; }
-  /* right column */
-  .pw-tr { width: 108px; height: 126px; top: 6%;     right: 13%; }
-  .pw-mr { width: 88px;  height: 104px; top: 8%;     right: 2%; }
-  .pw-br { width: 96px;  height: 114px; bottom: 6%;  right: 4%; }
-
-  /* make StudentIcon fill wrapper */
-  .pw > div,
-  .pw-mobile > div {
+    inset: 0;
     width: 100%;
     height: 100%;
+    object-fit: cover;
+    border-radius: 50px;
   }
 
+  /* Desktop positioning for student images */
+  @media (min-width: 1024px) {
+    .student-img {
+      display: block;
+    }
 
-  /* ── mobile photos ── */
-  .photos-mobile {
-    display: none;
+    .student-img-1 {
+      left: 96px;
+      top: 23px;
+    }
+
+    .student-img-1 .student-photo {
+      width: 150.67%;
+      height: 226%;
+      left: -13.09%;
+      top: -33.41%;
+    }
+
+    .student-img-2 {
+      left: 300px;
+      top: 163px;
+    }
+
+    .student-img-2 .student-photo {
+      width: 300%;
+      height: 282.1%;
+      left: -94.25%;
+      top: -57.86%;
+    }
+
+    .student-img-3 {
+      left: 64px;
+      top: 240px;
+    }
+
+    .student-img-3 .student-photo {
+      width: 146%;
+      height: 146%;
+      left: -0.05%;
+      top: -4.43%;
+    }
+
+    .student-img-4 {
+      right: 267px;
+      top: 23px;
+    }
+
+    .student-img-4 .student-photo {
+      width: 131.28%;
+      height: 153.75%;
+      left: -11.24%;
+      top: -16.08%;
+    }
+
+    .student-img-5 {
+      right: 0;
+      top: 102px;
+    }
+
+    .student-img-5 .student-photo {
+      width: 130.41%;
+      height: 137%;
+      left: -15.21%;
+      top: -18.5%;
+    }
+
+    .student-img-6 {
+      right: 148px;
+      top: 284px;
+    }
+
+    .student-img-6 .student-photo {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+  }
+
+  /* Main content */
+  .main-content {
+    max-width: 800px;
+    margin: 0 auto;
+  }
+
+  .cta-heading {
+    font-family: 'Poppins', 'SF Pro', sans-serif;
+    font-weight: 700;
+    font-size: 48px;
+    line-height: 1.3;
+    margin: 0;
+  }
+
+  .cta-button {
+    background: rgba(255, 255, 255, 0.18);
+    border-radius: 40px;
+    box-shadow: 0px 0px 16.1px -4px #4242a5;
+    padding: 10px;
+    height: 51px;
+    width: 154px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .cta-button:hover {
+    background: rgba(255, 255, 255, 0.3);
+    box-shadow: 0px 0px 20px -2px #4242a5;
+    transform: translateY(-2px);
+  }
+
+  .button-text {
+    font-family: 'SF Pro', sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    color: #4242a5;
+    text-align: center;
+    white-space: nowrap;
+    margin: 0;
+    line-height: 1.4;
+  }
+
+  /* Responsive adjustments */
+  @media (max-width: 1023px) {
+    .cta-heading {
+      font-size: 36px;
+    }
   }
 
   @media (max-width: 767px) {
     .cta-section {
-      height: auto;
-      padding: 3rem 1.5rem 2rem;
-      flex-direction: column;
-      gap: 1.5rem;
+      min-height: 320px;
     }
-    .photos-mobile {
-      display: flex;
-      justify-content: center;
-      flex-wrap: wrap;
-      gap: 0.6rem;
+
+    .cta-heading {
+      font-size: 28px;
     }
-    .pw-mobile {
-      width: 64px;
-      height: 76px;
+
+    .main-content {
+      padding-top: 6rem;
+      padding-bottom: 6rem;
+    }
+
+    .bg-shapes {
+      left: -100px;
+    }
+
+    .right-shape {
+      width: 300px;
+      height: 320px;
+      right: -100px;
+    }
+
+    .left-shape {
+      width: 360px;
+      height: 330px;
+    }
+
+    .rotate-wrapper {
+      width: 200px;
+      height: 300px;
     }
   }
 </style>
