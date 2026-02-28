@@ -1,323 +1,118 @@
 ---
-import Button from '../../components/button/Button.astro';
+/**
+ * CTA Section
+ * Desktop: 6 floating student photos around a centred heading + glass button.
+ * Mobile/tablet: heading + button + 4-photo horizontal strip.
+ * Photo positions are percentages of the 1440 × 440 Figma frame (node 103:597).
+ */
 
-// Student images from Figma
-const students = [
-  { src: 'https://www.figma.com/api/mcp/asset/8cdde401-8d73-4788-a9c3-997ac5c45306', alt: 'Student 1' },
-  { src: 'https://www.figma.com/api/mcp/asset/e892ca78-52b8-4ff2-97dd-82e3c1419fa4', alt: 'Student 2' },
-  { src: 'https://www.figma.com/api/mcp/asset/8ac32b70-5cd8-41c9-8a88-c80bc1aabc4d', alt: 'Student 3' },
-  { src: 'https://www.figma.com/api/mcp/asset/bdfa6a61-1564-41b1-94c1-4ca52f46e48b', alt: 'Student 4' },
-  { src: 'https://www.figma.com/api/mcp/asset/f30d9e3c-c88b-43f8-9725-bd816021d655', alt: 'Student 5' },
-  { src: 'https://www.figma.com/api/mcp/asset/6ddf4c84-8906-4584-9ff0-4e3e8ab0b215', alt: 'Student 6' },
+interface Student {
+  src: string;
+  /** Tailwind absolute-position classes derived from the Figma frame */
+  pos: string;
+}
+
+const students: Student[] = [
+  { src: 'https://www.figma.com/api/mcp/asset/8cdde401-8d73-4788-a9c3-997ac5c45306', pos: 'left-[6.67%]   top-[5.23%]'   },
+  { src: 'https://www.figma.com/api/mcp/asset/e892ca78-52b8-4ff2-97dd-82e3c1419fa4', pos: 'left-[20.83%]  top-[37.05%]'  },
+  { src: 'https://www.figma.com/api/mcp/asset/8ac32b70-5cd8-41c9-8a88-c80bc1aabc4d', pos: 'left-[4.44%]   top-[54.55%]'  },
+  { src: 'https://www.figma.com/api/mcp/asset/bdfa6a61-1564-41b1-94c1-4ca52f46e48b', pos: 'right-[13.54%] top-[5.23%]'   },
+  { src: 'https://www.figma.com/api/mcp/asset/f30d9e3c-c88b-43f8-9725-bd816021d655', pos: 'right-[-3.61%] top-[23.18%]'  },
+  { src: 'https://www.figma.com/api/mcp/asset/6ddf4c84-8906-4584-9ff0-4e3e8ab0b215', pos: 'right-[6.39%]  top-[64.55%]'  },
 ];
 
-// Background shapes from Figma
-const bgVector12 = 'https://www.figma.com/api/mcp/asset/1a8f84c5-ff4d-4656-b7fe-9b7f79d8d818';
-const bgVector13 = 'https://www.figma.com/api/mcp/asset/5b0218b7-2c6f-4902-8489-b715b300d51c';
+const BG_LEFT  = 'https://www.figma.com/api/mcp/asset/5b0218b7-2c6f-4902-8489-b715b300d51c';
+const BG_RIGHT = 'https://www.figma.com/api/mcp/asset/1a8f84c5-ff4d-4656-b7fe-9b7f79d8d818';
 ---
 
-<section class="cta-section relative overflow-hidden bg-transparent">
-  <!-- Background shapes -->
-  <div class="bg-shapes absolute pointer-events-none" aria-hidden="true">
-    <!-- Right background shape -->
-    <div class="absolute right-shape">
-      <img src={bgVector12} alt="" class="block max-w-none w-full h-full" />
+<section
+  id="cta"
+  class="relative isolate overflow-hidden
+         flex flex-col items-center justify-center gap-7
+         min-h-[clamp(320px,44vw,440px)] py-12 px-6
+         sm:py-16 sm:px-8
+         lg:min-h-110 lg:py-20 lg:gap-0"
+>
+
+  {/* ── Decorative background blobs (below everything) ── */}
+  <div class="absolute inset-0 -z-10 pointer-events-none" aria-hidden="true">
+
+    {/* Left blob — rotated */}
+    <div class="absolute -left-14 top-11.25
+                w-[clamp(180px,38vw,544px)] aspect-544/496
+                rotate-123 opacity-55 lg:opacity-100">
+      <img src={BG_LEFT} alt="" width="294" height="458"
+           class="block w-full h-full object-contain"
+           loading="lazy" decoding="async" />
     </div>
-    <!-- Left background shape (rotated) -->
-    <div class="absolute left-shape">
-      <div class="rotate-wrapper">
-        <img src={bgVector13} alt="" class="block max-w-none w-full h-full" />
-      </div>
+
+    {/* Right blob — clamp() on `right` can't be expressed in Tailwind, so one inline style */}
+    <div class="absolute top-3.75
+                w-[clamp(200px,32vw,455px)] aspect-455/484
+                opacity-55 lg:opacity-100"
+         style="right: clamp(-143px, -10vw, -56px)">
+      <img src={BG_RIGHT} alt="" width="455" height="484"
+           class="block w-full h-full object-contain"
+           loading="lazy" decoding="async" />
     </div>
+
   </div>
 
-  <!-- Student images -->
-  <div class="student-images absolute inset-0 pointer-events-none" aria-hidden="true">
-    <!-- Top left -->
-    <div class="student-img student-img-1">
-      <div class="student-wrapper">
-        <img src={students[4].src} alt={students[4].alt} class="student-photo" />
-      </div>
-    </div>
-    
-    <!-- Middle left -->
-    <div class="student-img student-img-2">
-      <div class="student-wrapper">
-        <img src={students[5].src} alt={students[5].alt} class="student-photo" />
-      </div>
-    </div>
-    
-    <!-- Bottom left -->
-    <div class="student-img student-img-3">
-      <div class="student-wrapper">
-        <img src={students[3].src} alt={students[3].alt} class="student-photo" />
-      </div>
-    </div>
-    
-    <!-- Top right -->
-    <div class="student-img student-img-4">
-      <div class="student-wrapper">
-        <img src={students[0].src} alt={students[0].alt} class="student-photo" />
-      </div>
-    </div>
-    
-    <!-- Top right corner -->
-    <div class="student-img student-img-5">
-      <div class="student-wrapper">
-        <img src={students[1].src} alt={students[1].alt} class="student-photo" />
-      </div>
-    </div>
-    
-    <!-- Bottom right -->
-    <div class="student-img student-img-6">
-      <div class="student-wrapper">
-        <img src={students[2].src} alt={students[2].alt} class="student-photo" />
-      </div>
-    </div>
-  </div>
+  {/* ── Floating student photos — desktop only ── */}
+  <ul class="hidden lg:block absolute inset-0 pointer-events-none list-none m-0 p-0"
+      aria-hidden="true">
+    {students.map((s) => (
+      <li class={`absolute
+                  w-[clamp(100px,10vw,144px)] h-[clamp(100px,10vw,144px)]
+                  rounded-[50px] overflow-hidden
+                  shadow-[0_0_8.2px_0_#4444b2] bg-[rgba(96,96,195,0.4)]
+                  ${s.pos}`}>
+        <img src={s.src} alt="" width="144" height="144"
+             class="w-full h-full object-cover object-top"
+             loading="lazy" decoding="async" />
+      </li>
+    ))}
+  </ul>
 
-  <!-- Main content -->
-  <div class="main-content relative z-10 flex flex-col items-center justify-center gap-2.5 py-32 px-6">
-    <h2 class="cta-heading text-center text-[#4242A5]">
+  {/* ── Primary content ── */}
+  <div class="relative z-10 flex flex-col items-center gap-5 max-w-xl text-center">
+
+    <h2 class="font-['Poppins',sans-serif] font-bold text-[#4242a5]
+               text-[clamp(1.75rem,5vw,3rem)] leading-[1.3] m-0">
       Preparado para dar um salto<br />na sua carreira ?
     </h2>
-    <div class="cta-button">
-      <p class="button-text">Fale conosco</p>
-    </div>
+
+    <a href="#contato"
+       class="inline-flex items-center justify-center
+              min-w-38.5 h-12.75 px-8
+              rounded-[40px] bg-white/18
+              shadow-[0_0_16.1px_-4px_#4242a5]
+              text-[#4242a5] font-['Poppins',sans-serif] font-bold text-sm
+              no-underline whitespace-nowrap leading-none
+              transition-[background-color,box-shadow,transform] duration-200 ease-out
+              hover:bg-white/32 hover:-translate-y-0.5
+              hover:shadow-[0_0_24px_-2px_#4242a5]
+              focus-visible:outline-2 focus-visible:outline-[#4242a5]
+              focus-visible:outline-offset-3 focus-visible:shadow-[0_0_24px_-2px_#4242a5]
+              motion-reduce:transition-none">
+      Fale conosco
+    </a>
+
   </div>
+
+  {/* ── Photo strip — mobile / tablet only ── */}
+  <ul class="flex lg:hidden flex-nowrap justify-center gap-2 list-none m-0 p-0"
+      aria-hidden="true">
+    {students.slice(0, 4).map((s) => (
+      <li class="shrink-0
+                 w-[clamp(60px,16vw,84px)] h-[clamp(60px,16vw,84px)]
+                 rounded-[18px] overflow-hidden
+                 shadow-[0_0_6px_0_rgba(68,68,178,0.5)] bg-[rgba(96,96,195,0.4)]">
+        <img src={s.src} alt="" width="80" height="80"
+             class="w-full h-full object-cover object-top"
+             loading="lazy" decoding="async" />
+      </li>
+    ))}
+  </ul>
+
 </section>
-
-<style>
-  .cta-section {
-    position: relative;
-    min-height: 440px;
-  }
-
-  /* Background shapes */
-  .bg-shapes {
-    top: 0;
-    left: -56px;
-    right: 0;
-    bottom: 0;
-    z-index: 0;
-  }
-
-  .right-shape {
-    width: 455px;
-    height: 484px;
-    right: -56px;
-    top: 15px;
-  }
-
-  .left-shape {
-    width: 544px;
-    height: 496px;
-    left: 0;
-    top: 45px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .rotate-wrapper {
-    transform: rotate(123deg);
-    width: 294px;
-    height: 458px;
-  }
-
-  /* Student images */
-  .student-images {
-    z-index: 1;
-  }
-
-  .student-img {
-    position: absolute;
-    display: none;
-  }
-
-  .student-wrapper {
-    position: relative;
-    width: 144px;
-    height: 144px;
-    border-radius: 50px;
-    box-shadow: 0px 0px 8.2px 0px #4444b2;
-    overflow: hidden;
-    background: rgba(96, 96, 195, 0.4);
-  }
-
-  .student-photo {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    border-radius: 50px;
-  }
-
-  /* Desktop positioning for student images */
-  @media (min-width: 1024px) {
-    .student-img {
-      display: block;
-    }
-
-    .student-img-1 {
-      left: 96px;
-      top: 23px;
-    }
-
-    .student-img-1 .student-photo {
-      width: 150.67%;
-      height: 226%;
-      left: -13.09%;
-      top: -33.41%;
-    }
-
-    .student-img-2 {
-      left: 300px;
-      top: 163px;
-    }
-
-    .student-img-2 .student-photo {
-      width: 300%;
-      height: 282.1%;
-      left: -94.25%;
-      top: -57.86%;
-    }
-
-    .student-img-3 {
-      left: 64px;
-      top: 240px;
-    }
-
-    .student-img-3 .student-photo {
-      width: 146%;
-      height: 146%;
-      left: -0.05%;
-      top: -4.43%;
-    }
-
-    .student-img-4 {
-      right: 267px;
-      top: 23px;
-    }
-
-    .student-img-4 .student-photo {
-      width: 131.28%;
-      height: 153.75%;
-      left: -11.24%;
-      top: -16.08%;
-    }
-
-    .student-img-5 {
-      right: 0;
-      top: 102px;
-    }
-
-    .student-img-5 .student-photo {
-      width: 130.41%;
-      height: 137%;
-      left: -15.21%;
-      top: -18.5%;
-    }
-
-    .student-img-6 {
-      right: 148px;
-      top: 284px;
-    }
-
-    .student-img-6 .student-photo {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-  }
-
-  /* Main content */
-  .main-content {
-    max-width: 800px;
-    margin: 0 auto;
-  }
-
-  .cta-heading {
-    font-family: 'Poppins', 'SF Pro', sans-serif;
-    font-weight: 700;
-    font-size: 48px;
-    line-height: 1.3;
-    margin: 0;
-  }
-
-  .cta-button {
-    background: rgba(255, 255, 255, 0.18);
-    border-radius: 40px;
-    box-shadow: 0px 0px 16.1px -4px #4242a5;
-    padding: 10px;
-    height: 51px;
-    width: 154px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
-    cursor: pointer;
-    transition: all 0.3s ease;
-  }
-
-  .cta-button:hover {
-    background: rgba(255, 255, 255, 0.3);
-    box-shadow: 0px 0px 20px -2px #4242a5;
-    transform: translateY(-2px);
-  }
-
-  .button-text {
-    font-family: 'SF Pro', sans-serif;
-    font-weight: 700;
-    font-size: 14px;
-    color: #4242a5;
-    text-align: center;
-    white-space: nowrap;
-    margin: 0;
-    line-height: 1.4;
-  }
-
-  /* Responsive adjustments */
-  @media (max-width: 1023px) {
-    .cta-heading {
-      font-size: 36px;
-    }
-  }
-
-  @media (max-width: 767px) {
-    .cta-section {
-      min-height: 320px;
-    }
-
-    .cta-heading {
-      font-size: 28px;
-    }
-
-    .main-content {
-      padding-top: 6rem;
-      padding-bottom: 6rem;
-    }
-
-    .bg-shapes {
-      left: -100px;
-    }
-
-    .right-shape {
-      width: 300px;
-      height: 320px;
-      right: -100px;
-    }
-
-    .left-shape {
-      width: 360px;
-      height: 330px;
-    }
-
-    .rotate-wrapper {
-      width: 200px;
-      height: 300px;
-    }
-  }
-</style>
-
