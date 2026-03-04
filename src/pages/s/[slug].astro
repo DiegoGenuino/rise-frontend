@@ -1,0 +1,24 @@
+---
+import SplashScreen from "../../components/splash-screen/Splash"
+import { shareRoutes } from "../../data/shareRoutes"
+import BaseLayout from "../../layouts/BaseLayout.astro";
+
+// expose dynamic slugs to Astro
+export function getStaticPaths() {
+  return Object.keys(shareRoutes).map((slug) => ({
+    params: { slug },
+  }));
+}
+
+const { slug } = Astro.params // get slug at url
+const target = shareRoutes[slug ?? null]  // if doesn't find it at shareRoutes, assign a null value
+if (!target) return Astro.redirect("/404")  // if it's null redirects to 404
+---
+
+<BaseLayout 
+seo={{
+  title: ""
+}}
+>
+  <SplashScreen client:load to={target.to} />
+</BaseLayout>
