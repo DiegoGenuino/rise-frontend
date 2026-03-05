@@ -1,28 +1,29 @@
 ---
-/**
- * CTA Section
- * Desktop: 6 floating student photos around a centred heading + glass button.
- * Mobile/tablet: heading + button + 4-photo horizontal strip.
- * Photo positions are percentages of the 1440 × 440 Figma frame (node 103:597).
- */
+import StudentImage1 from "../../assets/images/cta/student-image-1.png"
+import StudentImage2 from "../../assets/images/cta/student-image-2.png"
+import StudentImage3 from "../../assets/images/cta/student-image-3.png"
+import StudentImage4 from "../../assets/images/cta/student-image-4.png"
+import StudentImage5 from "../../assets/images/cta/student-image-5.png"
+import StudentImage6 from "../../assets/images/cta/student-image-6.png"
 
+import LeftVector from "../../assets/icons/cta-vectors/left-vector.svg"
+import RightVector from "../../assets/icons/cta-vectors/right-vector.svg"
 interface Student {
   src: string;
-  /** Tailwind absolute-position classes derived from the Figma frame */
   pos: string;
 }
 
 const students: Student[] = [
-  { src: 'https://www.figma.com/api/mcp/asset/8cdde401-8d73-4788-a9c3-997ac5c45306', pos: 'left-[6.67%]   top-[5.23%]'   },
-  { src: 'https://www.figma.com/api/mcp/asset/e892ca78-52b8-4ff2-97dd-82e3c1419fa4', pos: 'left-[20.83%]  top-[37.05%]'  },
-  { src: 'https://www.figma.com/api/mcp/asset/8ac32b70-5cd8-41c9-8a88-c80bc1aabc4d', pos: 'left-[4.44%]   top-[54.55%]'  },
-  { src: 'https://www.figma.com/api/mcp/asset/bdfa6a61-1564-41b1-94c1-4ca52f46e48b', pos: 'right-[13.54%] top-[5.23%]'   },
-  { src: 'https://www.figma.com/api/mcp/asset/f30d9e3c-c88b-43f8-9725-bd816021d655', pos: 'right-[-3.61%] top-[23.18%]'  },
-  { src: 'https://www.figma.com/api/mcp/asset/6ddf4c84-8906-4584-9ff0-4e3e8ab0b215', pos: 'right-[6.39%]  top-[64.55%]'  },
+  { src: StudentImage1.src, pos: 'left-[6.67%]   top-[5.23%]'   },
+  { src: StudentImage2.src, pos: 'left-[20.83%]  top-[37.05%]'  },
+  { src: StudentImage3.src, pos: 'left-[4.44%]   top-[54.55%]'  },
+  { src: StudentImage4.src, pos: 'right-[13.54%] top-[5.23%]'   },
+  { src: StudentImage5.src, pos: 'right-[-3.61%] top-[23.18%]'  },
+  { src: StudentImage6.src, pos: 'right-[6.39%]  top-[64.55%]'  },
 ];
 
-const BG_LEFT  = 'https://www.figma.com/api/mcp/asset/5b0218b7-2c6f-4902-8489-b715b300d51c';
-const BG_RIGHT = 'https://www.figma.com/api/mcp/asset/1a8f84c5-ff4d-4656-b7fe-9b7f79d8d818';
+const BG_LEFT  = LeftVector.src;
+const BG_RIGHT = RightVector.src;
 ---
 
 <section
@@ -34,37 +35,38 @@ const BG_RIGHT = 'https://www.figma.com/api/mcp/asset/1a8f84c5-ff4d-4656-b7fe-9b
          lg:min-h-110 lg:py-20 lg:gap-0 z-1"
 >
 
-  {/* ── Decorative background blobs (below everything) ── */}
-  <div class="absolute inset-0 -z-10 pointer-events-none" aria-hidden="true">
+   <!-- Decorative background blobs (below everything) -->
+  <div class="absolute inset-0 -z-10 pointer-events-none min-[300px]:blur-[4px] sm:blur-[6px]"
+      style="mask-image: linear-gradient(to bottom, black 0%, black 40%, rgba(0,0,0,0.8) 60%, rgba(0,0,0,0.4) 80%, transparent 100%); -webkit-mask-image: linear-gradient(to bottom, black 0%, black 40%, rgba(0,0,0,0.8) 60%, rgba(0,0,0,0.4) 80%, transparent 100%)"
+       aria-hidden="true">
 
-    {/* Left blob — rotated */}
+    <!-- Left blob — rotated -->
     <div class="absolute -left-14 top-11.25
-                w-[clamp(180px,38vw,544px)] aspect-544/496
-                rotate-123 opacity-55 lg:opacity-100">
+                w-[clamp(400px,68vw,40vw)] aspect-544/496
+                rotate-130 opacity-55 lg:opacity-100 lg:translate-y-12 min-[300px]:-translate-x-30 sm:-translate-x-30 sm:rotate-120 xl:translate-x-0">
       <img src={BG_LEFT} alt="" width="294" height="458"
            class="block w-full h-full object-contain"
            loading="lazy" decoding="async" />
     </div>
 
-    {/* Right blob — clamp() on `right` can't be expressed in Tailwind, so one inline style */}
-    <div class="absolute top-3.75
-                w-[clamp(200px,32vw,455px)] aspect-455/484
-                opacity-55 lg:opacity-100"
+    <!-- Right blob — clamp() on `right` can't be expressed in Tailwind, so one inline style  -->
+    <div class="absolute top-3.75 rotate-430
+                w-[clamp(380px,90vw,40vw)] aspect-455/484
+                opacity-55 lg:opacity-100 min-[300px]:translate-x-57  min-[300px]:rotate-110 sm:translate-x-10 sm:rotate-70 xl:-translate-x-20"
          style="right: clamp(-143px, -10vw, -56px)">
       <img src={BG_RIGHT} alt="" width="455" height="484"
            class="block w-full h-full object-contain"
            loading="lazy" decoding="async" />
     </div>
-
   </div>
 
-  {/* ── Floating student photos — desktop only ── */}
-  <ul class="hidden lg:block absolute inset-0 pointer-events-none list-none m-0 p-0"
+  <!-- Floating student photos — desktop only  -->
+  <ul class="hidden xl:block absolute inset-0 pointer-events-none list-none m-0 p-0"
       aria-hidden="true">
     {students.map((s) => (
       <li class={`absolute
                   w-[clamp(100px,10vw,144px)] h-[clamp(100px,10vw,144px)]
-                  rounded-[50px] overflow-hidden
+                  overflow-hidden rounded-[100px] md:rounded-[50px]
                   shadow-[0_0_8.2px_0_#4444b2] bg-[rgba(96,96,195,0.4)]
                   ${s.pos}`}>
         <img src={s.src} alt="" width="144" height="144"
@@ -74,12 +76,12 @@ const BG_RIGHT = 'https://www.figma.com/api/mcp/asset/1a8f84c5-ff4d-4656-b7fe-9b
     ))}
   </ul>
 
-  {/* ── Primary content ── */}
+  <!-- Primary content -->
   <div class="relative z-10 flex flex-col items-center gap-5 max-w-xl text-center">
 
     <h2 class="font-['Poppins',sans-serif] font-bold text-[#4242a5]
                text-[clamp(1.75rem,5vw,3rem)] leading-[1.3] m-0">
-      Preparado para dar um salto<br />na sua carreira ?
+      Preparado para dar um salto na sua carreira ?
     </h2>
 
     <a href="#contato"
@@ -100,14 +102,16 @@ const BG_RIGHT = 'https://www.figma.com/api/mcp/asset/1a8f84c5-ff4d-4656-b7fe-9b
 
   </div>
 
-  {/* ── Photo strip — mobile / tablet only ── */}
-  <ul class="flex lg:hidden flex-nowrap justify-center gap-2 list-none m-0 p-0"
+  <!-- Photo strip — mobile / tablet only -->
+  <ul class="flex lg:mt-10 xl:hidden flex-nowrap justify-center list-none m-0 p-0"
       aria-hidden="true">
-    {students.slice(0, 4).map((s) => (
-      <li class="shrink-0
-                 w-[clamp(60px,16vw,84px)] h-[clamp(60px,16vw,84px)]
-                 rounded-[18px] overflow-hidden
-                 shadow-[0_0_6px_0_rgba(68,68,178,0.5)] bg-[rgba(96,96,195,0.4)]">
+    {students.slice(0, 4).map((s, i) => (
+      <li class:list={[
+            "shrink-0 w-[clamp(30px,9vw,44px)] h-[clamp(30px,9vw,44px)]",
+            "rounded-[180px] overflow-hidden",
+            "shadow-[0_0_6px_0_rgba(68,68,178,0.5)] bg-[#4242a5cc] transition-colors duration-600 ease-in-out hover:bg-[#4242a5]",
+            i > 0 && "-ml-4"
+          ]}>
         <img src={s.src} alt="" width="80" height="80"
              class="w-full h-full object-cover object-top"
              loading="lazy" decoding="async" />
