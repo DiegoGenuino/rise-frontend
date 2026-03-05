@@ -1,7 +1,10 @@
-@import "@fontsource/fjalla-one";
-@import "@fontsource/schoolbell";
+@import "@fontsource/pixelify-sans";
+@import "@fontsource/handlee";
 @import "@fontsource/geist-mono";
-@import "@fontsource/unifrakturcook";
+@import "@fontsource/playfair-display";
+@import "@fontsource/salsa";
+@import "@fontsource/caladea";
+@import "@fontsource/schoolbell";
 
 .splash {
   position: fixed;
@@ -46,7 +49,7 @@
 }
 
 span.run-typography-animation {
-  animation: typography-animation 1.4s forwards;
+  animation: typography-animation 1.8s linear;
 }
 
 .logo.run-expand {
@@ -93,38 +96,36 @@ span.run-typography-animation {
 }
 
 @keyframes typography-animation {
+  0% {
+    font-style: italic;
+  }
   10% {
-    font-family: "Geist Mono", monospace;
+    font-style: normal;
+    font-family: "Pixelify Sans", sans-serif;
   }
   20% {
-    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    font-family: "Handlee", sans-serif;
   }
   30% {
-    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    font-family: "Geist Mono", sans-serif;
+  }
+  40% {
+    font-family: "Playfair Display", sans-serif;
   }
   50% {
-    font-family:
-      "Fjalla One" "Lucida Sans",
-      "Lucida Sans Regular",
-      "Lucida Grande",
-      "Lucida Sans Unicode",
-      Geneva,
-      Verdana,
-      sans-serif;
+    font-family: "Salsa", sans-serif;
   }
   60% {
-    font-family: Arial, Helvetica, sans-serif;
+    font-family: "Caladea", sans-serif;
   }
   70% {
-    font-family: Georgia, "Times New Roman", Times, serif;
+    font-family: "Geist Mono", monospace;
   }
   80% {
-    font-family:
-      "Unifrakturcook", "Franklin Gothic Medium", "Arial Narrow", Arial,
-      sans-serif;
+    font-family: "Playfair Display";
   }
   90% {
-    font-family: "Geist Mono", monospace;
+    font-family: "Schoolbell", sans-serif;
   }
   100% {
     font-family:
@@ -139,6 +140,6 @@ span.run-typography-animation {
       "Open Sans",
       "Helvetica Neue",
       sans-serif;
-    font-weight: bolder;
+    font-weight: bold;
   }
 }

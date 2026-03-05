@@ -10,9 +10,13 @@
   },
   "dependencies": {
     "@astrojs/react": "^4.4.2",
+    "@fontsource/caladea": "^5.2.8",
     "@fontsource/fjalla-one": "^5.2.7",
     "@fontsource/geist-mono": "^5.2.7",
+    "@fontsource/handlee": "^5.2.7",
+    "@fontsource/pixelify-sans": "^5.2.7",
     "@fontsource/playfair-display": "^5.2.8",
+    "@fontsource/salsa": "^5.2.7",
     "@fontsource/schoolbell": "^5.2.7",
     "@fontsource/unifrakturcook": "^5.2.8",
     "@iconify-json/akar-icons": "^1.2.7",

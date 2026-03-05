@@ -32,20 +32,36 @@ export default function Splash({ to }: SplashProps) {
     const onMaskAnimationEnd = (event: AnimationEvent) => {
       if (event.animationName === "slide-out") {
         setTimeout(() => {
-          span?.classList.add("run-typography-animation");
+          // ensure all animation fonts are fully loaded before starting
+          Promise.all([
+            document.fonts.load("400 1em 'Pixelify Sans'"),
+            document.fonts.load("400 1em 'Handlee'"),
+            document.fonts.load("400 1em 'Geist Mono'"),
+            document.fonts.load("400 1em 'Playfair Display'"),
+            document.fonts.load("400 1em 'Salsa'"),
+            document.fonts.load("400 1em 'Caladea'"),
+            document.fonts.load("400 1em 'Schoolbell'"),
+          ]).then(() => {
+            span?.classList.add("run-typography-animation");
+          });
         }, 500);
       }
     };
 
     const onSpanAnimationEnd = (event: AnimationEvent) => {
       if (event.animationName === "typography-animation") {
+        // keeps the font bold after animation
+        if (spanRef.current) {
+          spanRef.current.style.fontWeight = "bold";
+        }
+
         setTimeout(() => {
           splash?.classList.add("hide");
-        }, 600);
+        }, 900);
 
         setTimeout(() => {
           window.location.replace(to);
-        }, 600);
+        }, 1300);
       }
     };
 
