@@ -7,23 +7,14 @@ const currentYear = new Date().getFullYear();
 
 const contatoLinks = [
   [
-    { label: "Instagram", url: "https://instagram.com" },
-    { label: "Whatsapp", url: "https://whatsapp.com" },
-    { label: "Youtube", url: "https://youtube.com" },
-    { label: "TikTok", url: "https://tiktok.com" },
-  ],
-  [
-    { label: "LinkedIn", url: "https://linkedin.com" },
-    { label: "X", url: "https://x.com" },
-    { label: "Facebook", url: "https://facebook.com" },
     { label: "Email", url: "mailto:contato@riseidiomas.com" },
-  ],
+  ]
 ];
 
 const saibaMaisLinks = [
   [
-    { label: "Instagram", url: "https://instagram.com" },
-    { label: "TikTok", url: "https://tiktok.com" },
+    { label: "Perguntas Frequentes", url: "#" },
+    { label: "", url: "#" },
   ],
 ];
 
@@ -38,34 +29,36 @@ const socialIcons = [
 ] as const;
 ---
 
-<footer class="relative z-[1] bg-[#fafafa]/80 pt-12 pb-0 bottom-0 px-6 shadow-[0_1px_20.3px_0_rgba(66,66,165,0.21)]">
+<footer class="relative z-[1] bg-[#fafafa]/80 pt-16 pb-0 bottom-0 px-6 shadow-[0_1px_20.3px_0_rgba(66,66,165,0.21)]">
   <div class="max-w-[1200px] mx-auto">
+    <!-- main grid -->
     <div
-      class="grid grid-cols-1 gap-16 mb-10 items-start md:gap-8 md:flex md:flex-col md:items-start md:justify-center"
+      class="grid grid-cols-1 gap-12
+        sm:grid-cols-2
+        lg:grid-cols-[1fr_auto_auto] lg:gap-x-24 lg:gap-y-0"
     >
-    <img src={riseLogo.src} alt="Rise Idiomas" class="w-20 select-none" />
-      <div
-        class="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-[auto_auto] gap-8 sm:gap-16"
-      >
-        <FooterTopic title="Contato" links={contatoLinks} />
-        <FooterTopic title="Saiba mais" links={saibaMaisLinks} />
+      <!-- brand column -->
+      <div class="flex flex-col gap-6 sm:col-span-2 lg:col-span-1">
+        <img src={riseLogo.src} alt="Rise Idiomas" class="w-20 select-none" />
+        <div class="flex flex-wrap gap-2">
+          {
+            socialIcons.map((s) => (
+              <SocialMediaIcon name={s.name} icon={s.icon} url={s.url} />
+            ))
+          }
+        </div>
       </div>
-    </div>
 
-    <!-- social icons -->
-    <div class="flex flex-wrap gap-3 mb-8">
-      {
-        socialIcons.map((s) => (
-          <SocialMediaIcon name={s.name} icon={s.icon} url={s.url} />
-        ))
-      }
+      <!-- topic columns -->
+      <FooterTopic title="Contato" links={contatoLinks} />
+      <FooterTopic title="Saiba mais" links={saibaMaisLinks} />
     </div>
 
     <!-- copyright bar -->
-    <div class="pb-6">
-      <hr class="border-0 border-t border-[#e0e0e0] mb-4" />
-      <p class="font-semibold lg:font-[400] text-center text-xs text-[#8e8e8e]/80">
-        {currentYear} RISE IDIOMAS. DESENVOLVIDO POR SUBLIME STUDIO.
+    <div class="mt-16 pb-6">
+      <hr class="border-0 border-t border-[#e5e5e5] mb-5" />
+      <p class="text-center text-[0.7rem] tracking-wider text-[#b0b0b0]">
+        {currentYear} RISE IDIOMAS.
       </p>
     </div>
   </div>
