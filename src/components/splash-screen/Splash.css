@@ -1,0 +1,145 @@
+@import "@fontsource/pixelify-sans";
+@import "@fontsource/handlee";
+@import "@fontsource/geist-mono";
+@import "@fontsource/playfair-display";
+@import "@fontsource/salsa";
+@import "@fontsource/caladea";
+@import "@fontsource/schoolbell";
+
+.splash {
+  position: fixed;
+  inset: 0;
+  background: #f4f4f4;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  transition: opacity 350ms ease-in-out;
+  width: 100vw;
+}
+
+.splash img {
+  position: absolute;
+  transform: translateY(clamp(-4rem, -5vmin, -10rem));
+  margin-bottom: 1rem;
+  width: clamp(5rem, 8vmin, 12rem);
+}
+
+.splash p {
+  font-family:
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    Oxygen,
+    Ubuntu,
+    Cantarell,
+    "Open Sans",
+    "Helvetica Neue",
+    sans-serif;
+  font-size: clamp(1.1rem, 1.8vmin, 2.2rem);
+  transform: translateY(7rem);
+  color: #4242a5;
+}
+
+.hide {
+  opacity: 0;
+}
+
+span.run-typography-animation {
+  animation: typography-animation 1.8s linear;
+}
+
+.logo.run-expand {
+  animation: expand 2s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+}
+
+.text-container {
+  position: relative;
+  overflow: hidden;
+  transform: translateY(clamp(3rem, 5vmin, 6rem));
+}
+
+.text-container p {
+  transform: none;
+}
+
+.mask {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: #f4f4f4;
+}
+
+.mask.slide-out {
+  animation: slide-out 0.8s ease-in-out forwards;
+}
+
+@keyframes expand {
+  from {
+    width: clamp(5rem, 8vmin, 12rem);
+  }
+  to {
+    width: clamp(10rem, 16vmin, 24rem);
+  }
+}
+
+@keyframes slide-out {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes typography-animation {
+  0% {
+    font-style: italic;
+  }
+  10% {
+    font-style: normal;
+    font-family: "Pixelify Sans", sans-serif;
+  }
+  20% {
+    font-family: "Handlee", sans-serif;
+  }
+  30% {
+    font-family: "Geist Mono", sans-serif;
+  }
+  40% {
+    font-family: "Playfair Display", sans-serif;
+  }
+  50% {
+    font-family: "Salsa", sans-serif;
+  }
+  60% {
+    font-family: "Caladea", sans-serif;
+  }
+  70% {
+    font-family: "Geist Mono", monospace;
+  }
+  80% {
+    font-family: "Playfair Display";
+  }
+  90% {
+    font-family: "Schoolbell", sans-serif;
+  }
+  100% {
+    font-family:
+      system-ui,
+      -apple-system,
+      BlinkMacSystemFont,
+      "Segoe UI",
+      Roboto,
+      Oxygen,
+      Ubuntu,
+      Cantarell,
+      "Open Sans",
+      "Helvetica Neue",
+      sans-serif;
+    font-weight: bold;
+  }
+}

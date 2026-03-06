@@ -1,0 +1,66 @@
+---
+interface Props {
+  seo?: {
+    title?: string;
+    description?: string;
+    image?: string;
+    canonicalUrl?: string;
+    type?: string;
+  };
+}
+
+const { seo } = Astro.props;
+
+const defaultTitle = "Rise Idiomas";
+const defaultDescription =
+  "Aprenda inglês de forma estratégica. Cursos e trilhas focadas no seu sucesso.";
+const defaultImage = "/favicon.svg"; // Fallback image for Open Graph
+
+const title = seo?.title ? `${seo.title} | Rise Idiomas` : defaultTitle;
+const description = seo?.description || defaultDescription;
+const canonicalUrl = seo?.canonicalUrl || Astro.url.href;
+const image = seo?.image || defaultImage;
+const type = seo?.type || "website";
+
+import "../styles/global.css";
+---
+
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="generator" content={Astro.generator} />
+
+    <!-- Primary Meta Tags -->
+    <title>{title}</title>
+    <meta name="title" content={title} />
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonicalUrl} />
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content={type} />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={new URL(image, Astro.url)} />
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content={canonicalUrl} />
+    <meta property="twitter:title" content={title} />
+    <meta property="twitter:description" content={description} />
+    <meta property="twitter:image" content={new URL(image, Astro.url)} />
+
+    <!-- Additional SEO & Accessibility defaults -->
+    <meta name="robots" content="index, follow" />
+    <meta name="author" content="Rise Idiomas" />
+    <meta name="theme-color" content="#4142A6" />
+
+    <slot name="head" />
+  </head>
+  <body>
+    <slot />
+  </body>
+</html>
