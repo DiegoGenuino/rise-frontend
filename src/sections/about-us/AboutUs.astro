@@ -2,25 +2,34 @@
 import "@fontsource/schoolbell"
 import "@fontsource/fjalla-one"
 ---
-<!-- FIXME: limited width scope doesn't cover large viewports (1024px>), so the carousel gets a blank gap between its groups -->
-<div class="carousel">
-    <div class="group">
-        <p class="item">RISE</p>
-        <p class="item">RISE</p>
-        <p class="item">RISE</p>
-        <p class="item">RISE</p>
-        <p class="item">RISE</p>
-        <p class="item">RISE</p>
-    </div>
-    <div class="group">
-        <p class="item">RISE</p>
-        <p class="item">RISE</p>
-        <p class="item">RISE</p>
-        <p class="item">RISE</p>
-        <p class="item">RISE</p>
-        <p class="item">RISE</p>
+<div class="embla">
+    <div class="embla__container">
+        <p class="embla__slide">RISE</p>
+        <p class="embla__slide">RISE</p>
+        <p class="embla__slide">RISE</p>
+        <p class="embla__slide">RISE</p>
+        <p class="embla__slide">RISE</p>
+        <p class="embla__slide">RISE</p>
+        <p class="embla__slide">RISE</p>
+        <p class="embla__slide">RISE</p>
+        <p class="embla__slide">RISE</p>
+        <p class="embla__slide">RISE</p>
+        <p class="embla__slide">RISE</p>
+        <p class="embla__slide">RISE</p>
     </div>
 </div>
+
+<script>
+    import EmblaCarousel from "embla-carousel";
+    import AutoScroll from "embla-carousel-auto-scroll";
+
+    const viewport = document.querySelector<HTMLElement>(".embla")!;
+    EmblaCarousel(
+        viewport,
+        { loop: true, dragFree: true, watchDrag: false },
+        [AutoScroll({ playOnInit: true, speed: 1.5, stopOnInteraction: false })]
+    );
+</script>
 
 <div id="about-us" class="flex-col mx-5 text-[#00003A] lg:mx-12">
     <h1 class="font-[Schoolbell] text-5xl opacity-90 mb-3 lg:text-6xl lg:mb-7">[Quem Somos?]</h1>
@@ -29,67 +38,49 @@ import "@fontsource/fjalla-one"
 </div>
 
 <style>
-    .carousel{
-        display: flex;
+    .embla {
         overflow: hidden;
-        padding: 1rem 0;
         border: 1px solid #4242a54d;
     }
 
-    .group{
+    .embla__container {
         display: flex;
-        gap: 5rem;
-        padding-right: 5rem;
-        will-change: transform;
-        animation: horizontally-scroll 20s linear infinite;
+        align-items: center;
+        padding: 1rem 0;
     }
 
-    .item{
+    .embla__slide {
+        flex: 0 0 auto;
         font-family: 'Fjalla One', cursive;
         font-size: 4.4rem;
         color: transparent;
         -webkit-text-stroke-width: 1px;
         -webkit-text-stroke-color: #4242a54d;
+        padding: 0 2.5rem;
+        cursor: default;
+        user-select: none;
     }
 
-    .item:hover{
+    .embla__slide:hover {
         color: #4242a5;
         -webkit-text-stroke-color: transparent;
         transition: 0.5s ease-in-out;
     }
 
-    @keyframes horizontally-scroll {
-        0% {
-            transform: translateX(0);
-        }
-        100% {
-            transform: translateX(-100%);
-        }
-    }
-
-    @media (max-width:1024px) {
-        .carousel{
+    @media (max-width: 1024px) {
+        .embla__container {
             padding: 0.4rem 0;
         }
 
-        .item{
+        .embla__slide {
             font-size: 4rem;
         }
     }
 
-    
-    @media (max-width:800px) {
-        .carousel{
-            padding: 0.4rem 0;
-        }
-
-        .group{
-            gap: 3rem;
-            padding-right: 3rem;
-        }
-
-        .item{
+    @media (max-width: 800px) {
+        .embla__slide {
             font-size: 3rem;
+            padding: 0 1.5rem;
         }
     }
 </style>

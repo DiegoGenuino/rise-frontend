@@ -26,6 +26,8 @@
     "@vercel/analytics": "^1.6.1",
     "astro": "^5.17.1",
     "astro-icon": "^1.1.5",
+    "embla-carousel": "^8.6.0",
+    "embla-carousel-auto-scroll": "^8.6.0",
     "gsap": "^3.14.2",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
