@@ -5,10 +5,13 @@ import Topbar from "../components/topbar/Topbar.astro";
 import Hero from "../sections/hero/Hero.astro";
 import Modalities from "../sections/modalities/Modalities.astro";
 import Testimonials from "../sections/testimonials/Testimonials.astro";
+import AboutUs from "../sections/about-us/AboutUs.astro";
+import Location from "../sections/location/Location.astro";
 import CTA from "../sections/cta/CTA.astro";
 import Footer from "../sections/footer/Footer.astro";
 import Analytics from "@vercel/analytics/astro";
 import EnrollmentLetter from "../components/enrollment-letter/EnrollmentLetter.tsx";
+import ViewportFallback from "../components/viewport-fallback/ViewportFallback.astro";
 import { fetchAnnouncementBar } from "../api/fetchAnnouncementBar";
 
 // announcement bar data
@@ -111,9 +114,15 @@ const {
         <!-- only executes this island when the user scrolls to it -->
         <EnrollmentLetter client:visible />
       </div>
+      <AboutUs />
+      <Location />
+      <!-- div to remove the gap between sections -->
+      <div class="mt-10">
       <CTA />
       <Footer />
+      </div>
     </main>
   </div>
   <Analytics />
+  <ViewportFallback />
 </BaseLayout>
