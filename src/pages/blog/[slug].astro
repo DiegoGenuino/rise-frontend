@@ -1,0 +1,1434 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import RiseLogo from "../../assets/shared/rise-logo.svg";
+import type { BlogPost } from "../../types/blog";
+import { getAllBlogPosts, getBlogPostBySlug, getRelatedPosts } from "../../data/blogPosts";
+
+export function getStaticPaths() {
+  return getAllBlogPosts().map((post) => ({
+    params: { slug: post.slug },
+  }));
+}
+
+const { slug } = Astro.params;
+const post = slug ? getBlogPostBySlug(slug) : undefined;
+
+if (!post) {
+  return Astro.redirect("/404");
+}
+
+const currentPost: BlogPost = post;
+const relatedPosts = getRelatedPosts(currentPost, 3);
+const titleLines =
+  currentPost.titleLines && currentPost.titleLines.length > 0
+    ? currentPost.titleLines
+    : [currentPost.title];
+const linkedInShareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(
+  Astro.url.href,
+)}`;
+---
+
+<BaseLayout
+  seo={{
+    title: currentPost.title,
+    description: currentPost.seoDescription || currentPost.excerpt,
+    type: "article",
+    image: currentPost.seoImage || "/favicon.svg",
+  }}
+>
+  <Fragment slot="head">
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@300;400;500;600&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap"
+      rel="stylesheet"
+    />
+  </Fragment>
+
+  <div class="blog-shell">
+    <div id="blog-progress" aria-hidden="true"></div>
+
+    <header class="topbar">
+      <a href="/" class="t-logo" aria-label="Ir para pagina inicial">
+        <img src={RiseLogo.src} alt="Rise Idiomas" width="82" height="40" />
+      </a>
+      <a href="/blog" class="t-back">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+          <path
+            d="M12 7H2M2 7L6 3M2 7L6 11"
+            stroke="currentColor"
+            stroke-width="1.3"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          ></path>
+        </svg>
+        Blog
+      </a>
+    </header>
+
+    <article>
+      <header class="art-header">
+        <div class="ah-left">
+          <div class="ah-meta">
+            <span class="ah-tag">{currentPost.category}</span>
+            <span class="ah-date">{currentPost.publishDateLabel}</span>
+            <span class="ah-dot">·</span>
+            <span class="ah-read">{currentPost.readingTimeMinutes} min de leitura</span>
+          </div>
+
+          <h1 class="ah-title">
+            {titleLines.map((line) => (
+              <span class="ah-title-row"><span class="ah-title-inner">{line}</span></span>
+            ))}
+          </h1>
+        </div>
+
+        <div class="ah-vr" aria-hidden="true"></div>
+
+        <div class="ah-right">
+          <div class="ah-author">
+            <div class="ah-avatar">{currentPost.author.initials}</div>
+            <div class="ah-author-info">
+              <div class="ah-author-name">{currentPost.author.name}</div>
+              <div class="ah-author-role">{currentPost.author.role}</div>
+            </div>
+          </div>
+
+          <div class="ah-share">
+            <span class="ah-share-label">Compartilhar</span>
+            <a
+              href={linkedInShareUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="share-btn"
+              aria-label="Compartilhar no LinkedIn"
+            >
+              <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
+                <rect x="1" y="1" width="11" height="11" rx="2" stroke="currentColor" stroke-width="1"></rect>
+                <path d="M4 9V6M4 4.5V5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"></path>
+                <path
+                  d="M7 9V7a1.5 1.5 0 013 0v2M7 6v3"
+                  stroke="currentColor"
+                  stroke-width="1.1"
+                  stroke-linecap="round"
+                ></path>
+              </svg>
+            </a>
+            <button id="copy-link-button" class="share-btn" aria-label="Copiar link do artigo">
+              <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
+                <path
+                  d="M5 7.5a3 3 0 004.243.243l1.5-1.5a3 3 0 00-4.243-4.243L5.5 3"
+                  stroke="currentColor"
+                  stroke-width="1.1"
+                  stroke-linecap="round"
+                ></path>
+                <path
+                  d="M8 5.5a3 3 0 00-4.243-.243L2.257 6.757a3 3 0 004.243 4.243L7.5 10"
+                  stroke="currentColor"
+                  stroke-width="1.1"
+                  stroke-linecap="round"
+                ></path>
+              </svg>
+            </button>
+          </div>
+          <p id="copy-link-feedback" class="copy-feedback" aria-live="polite"></p>
+        </div>
+      </header>
+
+      <div class="art-hero">
+        <div class="art-hero-ghost" aria-hidden="true">{currentPost.heroGhostWord || "FALAR"}</div>
+        <svg viewBox="0 0 520 280" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Ilustracao sobre speaking e fluencia">
+          <path d="M100 140 C100 80 148 40 200 40 C220 40 238 48 252 62 L252 218 C238 232 220 240 200 240 C148 240 100 200 100 140Z" fill="#E8E6DF" stroke="rgba(17,17,32,.1)" stroke-width="1"></path>
+          <path d="M130 100 C138 90 152 92 158 102" stroke="rgba(17,17,32,.12)" stroke-width="1.2" fill="none"></path>
+          <path d="M120 130 C132 118 148 122 152 134" stroke="rgba(17,17,32,.1)" stroke-width="1.2" fill="none"></path>
+          <path d="M132 162 C144 150 162 154 164 168" stroke="rgba(17,17,32,.1)" stroke-width="1.2" fill="none"></path>
+          <path d="M140 192 C154 180 172 184 172 198" stroke="rgba(17,17,32,.08)" stroke-width="1.2" fill="none"></path>
+          <path d="M252 62 C266 48 284 40 304 40 C356 40 404 80 404 140 C404 200 356 240 304 240 C284 240 266 232 252 218 Z" fill="#2B2BA8" opacity=".12" stroke="rgba(43,43,168,.25)" stroke-width="1"></path>
+          <path d="M280 100 C288 90 302 92 308 102" stroke="rgba(43,43,168,.3)" stroke-width="1.2" fill="none"></path>
+          <path d="M300 128 C312 116 328 120 332 132" stroke="rgba(43,43,168,.25)" stroke-width="1.2" fill="none"></path>
+          <path d="M290 162 C302 150 320 154 322 168" stroke="rgba(43,43,168,.2)" stroke-width="1.2" fill="none"></path>
+          <line x1="252" y1="32" x2="252" y2="248" stroke="rgba(17,17,32,.3)" stroke-width="1.5" stroke-dasharray="5 4"></line>
+          <text x="176" y="268" text-anchor="middle" font-family="Barlow Condensed, sans-serif" font-size="11" fill="#8A8A9E" letter-spacing="2">ENTENDE</text>
+          <text x="328" y="268" text-anchor="middle" font-family="Barlow Condensed, sans-serif" font-size="11" fill="#2B2BA8" letter-spacing="2">PRODUZ?</text>
+          <rect x="239" y="120" width="26" height="20" rx="3" fill="white" stroke="rgba(17,17,32,.2)" stroke-width="1"></rect>
+          <path d="M244 120 C244 111 260 111 260 120" stroke="rgba(17,17,32,.2)" stroke-width="1.2" fill="none"></path>
+          <circle cx="252" cy="130" r="3" fill="rgba(17,17,32,.25)"></circle>
+          <path d="M420 110 C432 124 432 156 420 170" stroke="rgba(43,43,168,.3)" stroke-width="1.5" fill="none"></path>
+          <path d="M428 98 C446 116 446 164 428 182" stroke="rgba(43,43,168,.2)" stroke-width="1.2" fill="none"></path>
+          <path d="M80 136 C80 128 88 128 88 136 C88 144 80 144 80 136Z" stroke="rgba(17,17,32,.2)" stroke-width="1" fill="none"></path>
+          <line x1="76" y1="132" x2="92" y2="140" stroke="rgba(17,17,32,.25)" stroke-width="1.2"></line>
+        </svg>
+      </div>
+
+      <div class="art-body-wrap">
+        <div class="art-rail" aria-hidden="true">
+          {
+            currentPost.sections.map((section, index) => (
+              <div class="rail-num" id={`rn-${section.id}`}>{String(index + 1).padStart(2, "0")}</div>
+            ))
+          }
+        </div>
+
+        <div class="art-prose" id="prose">
+          <p class="lead">{currentPost.lead}</p>
+
+          {
+            currentPost.sections.map((section) => (
+              <section id={section.id}>
+                <h2 set:html={section.headingHtml}></h2>
+                {
+                  section.blocks.map((block) => {
+                    if (block.type === "paragraph") {
+                      return <p set:html={block.content}></p>;
+                    }
+
+                    if (block.type === "subheading") {
+                      return <h3>{block.content}</h3>;
+                    }
+
+                    if (block.type === "callout") {
+                      return (
+                        <div class="callout">
+                          <div class="callout-label">{block.label}</div>
+                          <p>{block.content}</p>
+                        </div>
+                      );
+                    }
+
+                    if (block.type === "pullquote") {
+                      return (
+                        <div class="pullquote">
+                          <div class="pq-text">{block.quote}</div>
+                          <div class="pq-attr">{block.attribution}</div>
+                        </div>
+                      );
+                    }
+
+                    if (block.type === "numbered-list") {
+                      return (
+                        <ol>
+                          {
+                            block.items.map((item, itemIndex) => (
+                              <li>
+                                <span class="li-num">{String(itemIndex + 1).padStart(2, "0")}</span>
+                                <span>
+                                  <strong>{item.title}</strong> {item.description}
+                                </span>
+                              </li>
+                            ))
+                          }
+                        </ol>
+                      );
+                    }
+
+                    return <hr class="art-rule" />;
+                  })
+                }
+              </section>
+            ))
+          }
+
+          <div class="art-tags">
+            <span class="art-tags-label">Tags</span>
+            {currentPost.tags.map((tag) => <a class="atag" href={`/blog?tag=${encodeURIComponent(tag)}`}>{tag}</a>)}
+          </div>
+        </div>
+
+        <aside class="art-sidebar">
+          <div class="toc-label">Neste artigo</div>
+          <ul class="toc-list">
+            {
+              currentPost.sections.map((section, index) => (
+                <li class="toc-item">
+                  <a href={`#${section.id}`} class={`toc-link ${index === 0 ? "active" : ""}`}>
+                    <span class="toc-n">{String(index + 1).padStart(2, "0")}</span>
+                    {section.tocLabel}
+                  </a>
+                </li>
+              ))
+            }
+          </ul>
+
+          <div class="sb-cta">
+            <div class="sb-cta-label">{currentPost.sidebarCta.label}</div>
+            <p class="sb-cta-text">{currentPost.sidebarCta.text}</p>
+            <a href={currentPost.sidebarCta.buttonUrl} class="sb-cta-btn">
+              <span>{currentPost.sidebarCta.buttonText} -></span>
+            </a>
+          </div>
+
+          <div class="sb-rel-label">Leia tambem</div>
+          {
+            relatedPosts.map((relatedPost) => (
+              <a class="sb-rel-item" href={`/blog/${relatedPost.slug}`}>
+                <div class="sb-rel-tag">{relatedPost.category}</div>
+                <div class="sb-rel-title">{relatedPost.title}</div>
+              </a>
+            ))
+          }
+        </aside>
+      </div>
+
+      <div class="author-bio">
+        <div class="bio-left">
+          <div class="bio-avatar">{currentPost.author.initials}</div>
+          <div>
+            <div class="bio-name">{currentPost.author.name}</div>
+            <div class="bio-role">{currentPost.author.role}</div>
+            <p class="bio-text">{currentPost.author.bio}</p>
+          </div>
+        </div>
+
+        <div class="bio-vr" aria-hidden="true"></div>
+
+        <div class="bio-right">
+          <div class="bio-cta-label">Pronto para o proximo nivel?</div>
+          <div class="bio-cta-hl">
+            De o <span class="a">salto</span> que voce merece.
+          </div>
+          <a href="https://wa.me/5511948606841" class="bio-btn" target="_blank" rel="noopener noreferrer">
+            Fale conosco
+            <span class="bio-arr">
+              <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
+                <path
+                  d="M2 10L10 2M10 2H4.5M10 2V7.5"
+                  stroke="white"
+                  stroke-width="1.4"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                ></path>
+              </svg>
+            </span>
+          </a>
+        </div>
+      </div>
+
+      <div class="foot-bar">
+        {
+          currentPost.footerStats.map((stat) => (
+            <div class="fb">
+              <span class="fb-l">{stat.label}</span>
+              <span class="fb-v" set:html={stat.valueHtml}></span>
+            </div>
+          ))
+        }
+      </div>
+    </article>
+  </div>
+
+  <script is:inline>
+    (() => {
+      const progressBar = document.getElementById("blog-progress");
+      const tocLinks = Array.from(document.querySelectorAll(".toc-link"));
+      const railNumbers = Array.from(document.querySelectorAll(".rail-num"));
+
+      const sectionElements = tocLinks
+        .map((link) => {
+          const href = link.getAttribute("href");
+          if (!href || !href.startsWith("#")) {
+            return null;
+          }
+          return document.getElementById(href.slice(1));
+        })
+        .filter((section) => Boolean(section));
+
+      const updateProgress = () => {
+        if (!progressBar) {
+          return;
+        }
+        const scrollHeight = document.documentElement.scrollHeight - window.innerHeight;
+        const progress = scrollHeight > 0 ? (window.scrollY / scrollHeight) * 100 : 0;
+        progressBar.style.width = progress + "%";
+      };
+
+      const setActive = (activeIndex) => {
+        tocLinks.forEach((link, index) => {
+          link.classList.toggle("active", index === activeIndex);
+        });
+
+        railNumbers.forEach((railNumber, index) => {
+          railNumber.classList.toggle("vis", index <= activeIndex);
+          railNumber.classList.toggle("cur", index === activeIndex);
+        });
+      };
+
+      const sectionObserver = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (!entry.isIntersecting) {
+              return;
+            }
+
+            const sectionIndex = sectionElements.indexOf(entry.target);
+            if (sectionIndex >= 0) {
+              setActive(sectionIndex);
+            }
+          });
+        },
+        {
+          threshold: 0.3,
+          rootMargin: "-80px 0px -42% 0px",
+        },
+      );
+
+      sectionElements.forEach((section) => {
+        sectionObserver.observe(section);
+      });
+
+      tocLinks.forEach((link, index) => {
+        link.addEventListener("click", (event) => {
+          event.preventDefault();
+          const target = sectionElements[index];
+          if (!target) {
+            return;
+          }
+          target.scrollIntoView({
+            behavior: "smooth",
+            block: "start",
+          });
+        });
+      });
+
+      const revealTargets = document.querySelectorAll(
+        ".art-prose h2, .art-prose h3, .art-prose p, .callout, .pullquote, .art-prose ol, .art-rule",
+      );
+
+      const revealObserver = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (!entry.isIntersecting) {
+              return;
+            }
+            entry.target.classList.add("is-visible");
+            revealObserver.unobserve(entry.target);
+          });
+        },
+        { threshold: 0.1 },
+      );
+
+      revealTargets.forEach((target) => {
+        if (target.classList.contains("lead")) {
+          return;
+        }
+        target.classList.add("reveal-item");
+        revealObserver.observe(target);
+      });
+
+      const copyButton = document.getElementById("copy-link-button");
+      const copyFeedback = document.getElementById("copy-link-feedback");
+
+      const showCopyFeedback = (message) => {
+        if (!copyFeedback) {
+          return;
+        }
+        copyFeedback.textContent = message;
+        window.setTimeout(() => {
+          copyFeedback.textContent = "";
+        }, 2000);
+      };
+
+      if (copyButton) {
+        copyButton.addEventListener("click", async () => {
+          try {
+            if (navigator.clipboard && window.isSecureContext) {
+              await navigator.clipboard.writeText(window.location.href);
+              showCopyFeedback("Link copiado.");
+              return;
+            }
+            window.prompt("Copie o link do artigo:", window.location.href);
+            showCopyFeedback("Link pronto para copia.");
+          } catch {
+            window.prompt("Copie o link do artigo:", window.location.href);
+            showCopyFeedback("Nao foi possivel copiar automaticamente.");
+          }
+        });
+      }
+
+      setActive(0);
+      updateProgress();
+      window.addEventListener("scroll", updateProgress, { passive: true });
+    })();
+  </script>
+</BaseLayout>
+
+<style>
+  :root {
+    --cream: #f6f4ef;
+    --ink: #111120;
+    --blue: #2b2ba8;
+    --mid: #8a8a9e;
+    --rule: rgba(17, 17, 32, 0.1);
+    --rule-strong: rgba(17, 17, 32, 0.2);
+  }
+
+  .blog-shell {
+    background: var(--cream);
+    color: var(--ink);
+    overflow-x: hidden;
+  }
+
+  #blog-progress {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: var(--blue);
+    z-index: 200;
+    transition: width 120ms linear;
+  }
+
+  .topbar {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 44px;
+    background: rgba(246, 244, 239, 0.93);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .t-logo {
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .t-logo img {
+    width: 82px;
+    height: auto;
+    display: block;
+  }
+
+  .t-back {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: "Barlow Condensed", sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--mid);
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+    padding-bottom: 1px;
+    transition: color 260ms ease, border-color 260ms ease;
+  }
+
+  .t-back:hover {
+    color: var(--ink);
+    border-color: var(--rule-strong);
+  }
+
+  .art-header {
+    display: grid;
+    grid-template-columns: 1fr 1px 36%;
+    border-bottom: 1px solid var(--rule);
+    min-height: 220px;
+  }
+
+  .ah-left {
+    padding: 52px 52px 44px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 26px;
+  }
+
+  .ah-meta {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .ah-tag {
+    font-family: "Barlow Condensed", sans-serif;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--cream);
+    background: var(--blue);
+    padding: 5px 12px;
+  }
+
+  .ah-date,
+  .ah-read {
+    font-family: "Barlow Condensed", sans-serif;
+    font-size: 11px;
+    font-weight: 400;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--mid);
+  }
+
+  .ah-dot {
+    color: var(--rule-strong);
+  }
+
+  .ah-title {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .ah-title-row {
+    display: block;
+    overflow: hidden;
+  }
+
+  .ah-title-inner {
+    display: block;
+    font-family: "Bebas Neue", sans-serif;
+    font-size: clamp(52px, 7.5vw, 110px);
+    letter-spacing: 0.03em;
+    line-height: 0.88;
+    animation: lineup 840ms cubic-bezier(0.76, 0, 0.24, 1) both;
+  }
+
+  .ah-title-row:nth-child(2) .ah-title-inner {
+    animation-delay: 100ms;
+  }
+
+  .ah-title-row:nth-child(3) .ah-title-inner {
+    animation-delay: 200ms;
+  }
+
+  @keyframes lineup {
+    from {
+      transform: translateY(110%);
+    }
+    to {
+      transform: translateY(0);
+    }
+  }
+
+  .ah-vr {
+    background: var(--rule);
+  }
+
+  .ah-right {
+    padding: 52px 46px 44px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 20px;
+  }
+
+  .ah-author {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .ah-avatar {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: var(--blue);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-family: "Barlow Condensed", sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    flex-shrink: 0;
+  }
+
+  .ah-author-name {
+    font-size: 13px;
+    color: var(--ink);
+    line-height: 1.3;
+  }
+
+  .ah-author-role {
+    margin-top: 3px;
+    font-family: "Barlow Condensed", sans-serif;
+    font-size: 10px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--mid);
+  }
+
+  .ah-share {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex-wrap: wrap;
+  }
+
+  .ah-share-label {
+    font-family: "Barlow Condensed", sans-serif;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--mid);
+  }
+
+  .share-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    border: 1px solid var(--rule);
+    color: var(--ink);
+    background: transparent;
+    transition: border-color 220ms ease, background 220ms ease;
+    cursor: pointer;
+    text-decoration: none;
+  }
+
+  .share-btn:hover {
+    border-color: var(--rule-strong);
+    background: rgba(17, 17, 32, 0.04);
+  }
+
+  .copy-feedback {
+    min-height: 18px;
+    font-family: "Barlow Condensed", sans-serif;
+    font-size: 10px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--mid);
+  }
+
+  .art-hero {
+    position: relative;
+    overflow: hidden;
+    height: 380px;
+    border-bottom: 1px solid var(--rule);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(17, 17, 32, 0.02);
+  }
+
+  .art-hero-ghost {
+    position: absolute;
+    bottom: -8%;
+    right: -1%;
+    font-family: "Bebas Neue", sans-serif;
+    font-size: clamp(160px, 22vw, 320px);
+    letter-spacing: 0.06em;
+    line-height: 1;
+    color: transparent;
+    -webkit-text-stroke: 1px rgba(17, 17, 32, 0.05);
+    pointer-events: none;
+    user-select: none;
+  }
+
+  .art-hero svg {
+    width: min(92%, 520px);
+    height: auto;
+    position: relative;
+    z-index: 2;
+  }
+
+  .art-body-wrap {
+    display: grid;
+    grid-template-columns: 56px 1fr 340px;
+    border-bottom: 1px solid var(--rule);
+    align-items: start;
+  }
+
+  .art-rail {
+    border-right: 1px solid var(--rule);
+    padding-top: 52px;
+    position: sticky;
+    top: 74px;
+    align-self: start;
+  }
+
+  .rail-num {
+    font-family: "Barlow Condensed", sans-serif;
+    font-size: 9px;
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--mid);
+    writing-mode: vertical-lr;
+    padding: 0 18px 28px;
+    opacity: 0;
+    transition: opacity 320ms ease, color 320ms ease;
+  }
+
+  .rail-num.vis {
+    opacity: 1;
+  }
+
+  .rail-num.cur {
+    color: var(--blue);
+  }
+
+  .art-prose {
+    max-width: 760px;
+    padding: 52px 60px 64px;
+  }
+
+  .lead {
+    font-size: 19px;
+    font-weight: 300;
+    line-height: 1.72;
+    color: var(--ink);
+    margin-bottom: 48px;
+    border-left: 2px solid var(--blue);
+    padding-left: 24px;
+  }
+
+  .art-prose h2 {
+    font-family: "Bebas Neue", sans-serif;
+    font-size: clamp(36px, 4.5vw, 56px);
+    font-weight: 400;
+    letter-spacing: 0.03em;
+    line-height: 0.92;
+    margin: 56px 0 24px;
+    color: var(--ink);
+  }
+
+  .art-prose h2 :global(.em) {
+    color: var(--blue);
+  }
+
+  .art-prose h3 {
+    font-family: "Barlow Condensed", sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink);
+    margin: 36px 0 14px;
+  }
+
+  .art-prose p {
+    font-size: 16px;
+    font-weight: 300;
+    line-height: 1.82;
+    color: rgba(17, 17, 32, 0.75);
+    margin-bottom: 24px;
+  }
+
+  .art-prose p :global(strong) {
+    color: var(--ink);
+    font-weight: 500;
+  }
+
+  .art-prose p :global(em) {
+    color: rgba(17, 17, 32, 0.86);
+    font-style: italic;
+  }
+
+  .callout {
+    margin: 36px 0;
+    padding: 24px 28px;
+    border-left: 2px solid var(--blue);
+    background: rgba(43, 43, 168, 0.05);
+  }
+
+  .callout-label {
+    margin-bottom: 10px;
+    font-family: "Barlow Condensed", sans-serif;
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: var(--blue);
+  }
+
+  .callout p {
+    margin-bottom: 0;
+    color: var(--ink);
+  }
+
+  .pullquote {
+    margin: 48px 0;
+    padding-left: 32px;
+    border-left: 1px solid var(--rule-strong);
+  }
+
+  .pq-text {
+    margin-bottom: 16px;
+    font-family: "Bebas Neue", sans-serif;
+    font-size: clamp(28px, 3.5vw, 44px);
+    letter-spacing: 0.03em;
+    line-height: 0.95;
+    color: var(--ink);
+  }
+
+  .pq-attr {
+    font-family: "Barlow Condensed", sans-serif;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--mid);
+  }
+
+  .art-rule {
+    height: 1px;
+    border: none;
+    background: var(--rule);
+    margin: 48px 0;
+    transform-origin: left;
+  }
+
+  .art-prose ol {
+    list-style: none;
+    margin: 24px 0 32px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 0;
+  }
+
+  .art-prose ol li {
+    display: flex;
+    gap: 20px;
+    align-items: baseline;
+    font-size: 15.5px;
+    font-weight: 300;
+    line-height: 1.7;
+    color: rgba(17, 17, 32, 0.75);
+  }
+
+  .art-prose ol li strong {
+    color: var(--ink);
+    font-weight: 500;
+  }
+
+  .li-num {
+    width: 28px;
+    flex-shrink: 0;
+    font-family: "Bebas Neue", sans-serif;
+    font-size: 22px;
+    line-height: 1;
+    color: var(--blue);
+    letter-spacing: 0.04em;
+  }
+
+  .art-tags {
+    margin-top: 48px;
+    padding-top: 32px;
+    border-top: 1px solid var(--rule);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .art-tags-label {
+    margin-right: 4px;
+    font-family: "Barlow Condensed", sans-serif;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--mid);
+  }
+
+  .atag {
+    font-family: "Barlow Condensed", sans-serif;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--mid);
+    border: 1px solid var(--rule);
+    padding: 6px 14px;
+    text-decoration: none;
+    transition: color 220ms ease, border-color 220ms ease;
+  }
+
+  .atag:hover {
+    color: var(--ink);
+    border-color: var(--rule-strong);
+  }
+
+  .art-sidebar {
+    border-left: 1px solid var(--rule);
+    padding: 52px 40px;
+    position: sticky;
+    top: 74px;
+    align-self: start;
+  }
+
+  .toc-label,
+  .sb-rel-label {
+    margin-bottom: 18px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: "Barlow Condensed", sans-serif;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: var(--mid);
+  }
+
+  .toc-label::before,
+  .sb-rel-label::before {
+    content: "";
+    width: 18px;
+    height: 1px;
+    background: var(--blue);
+  }
+
+  .toc-list {
+    list-style: none;
+    margin-bottom: 44px;
+    padding: 0;
+  }
+
+  .toc-item {
+    border-top: 1px solid var(--rule);
+  }
+
+  .toc-link {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    padding: 11px 0;
+    text-decoration: none;
+    color: var(--mid);
+    font-size: 13px;
+    font-weight: 300;
+    line-height: 1.5;
+    transition: color 220ms ease;
+  }
+
+  .toc-link:hover,
+  .toc-link.active {
+    color: var(--ink);
+  }
+
+  .toc-n {
+    font-family: "Barlow Condensed", sans-serif;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    color: var(--mid);
+    transition: color 220ms ease;
+  }
+
+  .toc-link.active .toc-n {
+    color: var(--blue);
+  }
+
+  .sb-cta {
+    margin-bottom: 32px;
+    padding: 28px;
+    border: 1px solid var(--rule);
+    background: rgba(17, 17, 32, 0.03);
+  }
+
+  .sb-cta-label {
+    margin-bottom: 10px;
+    font-family: "Barlow Condensed", sans-serif;
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: var(--blue);
+  }
+
+  .sb-cta-text {
+    margin-bottom: 20px;
+    font-size: 13px;
+    font-weight: 300;
+    line-height: 1.65;
+    color: var(--ink);
+  }
+
+  .sb-cta-btn {
+    display: flex;
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+    padding: 12px 20px;
+    text-decoration: none;
+    font-family: "Barlow Condensed", sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--cream);
+    background: var(--ink);
+    transition: opacity 220ms ease;
+  }
+
+  .sb-cta-btn:hover {
+    opacity: 0.88;
+  }
+
+  .sb-rel-item {
+    display: block;
+    text-decoration: none;
+    border-top: 1px solid var(--rule);
+    padding: 14px 0;
+  }
+
+  .sb-rel-item:last-child {
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .sb-rel-tag {
+    margin-bottom: 5px;
+    font-family: "Barlow Condensed", sans-serif;
+    font-size: 9px;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--blue);
+  }
+
+  .sb-rel-title {
+    font-size: 13px;
+    font-weight: 300;
+    line-height: 1.5;
+    color: var(--mid);
+    transition: color 220ms ease;
+  }
+
+  .sb-rel-item:hover .sb-rel-title {
+    color: var(--ink);
+  }
+
+  .author-bio {
+    display: grid;
+    grid-template-columns: 1fr 1px 36%;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .bio-left {
+    padding: 44px 52px;
+    display: flex;
+    align-items: flex-start;
+    gap: 28px;
+  }
+
+  .bio-avatar {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    background: var(--blue);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-family: "Barlow Condensed", sans-serif;
+    font-size: 22px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+  }
+
+  .bio-name {
+    margin-bottom: 6px;
+    font-family: "Bebas Neue", sans-serif;
+    font-size: 30px;
+    letter-spacing: 0.03em;
+    line-height: 1;
+    color: var(--ink);
+  }
+
+  .bio-role {
+    margin-bottom: 14px;
+    font-family: "Barlow Condensed", sans-serif;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--blue);
+  }
+
+  .bio-text {
+    font-size: 13.5px;
+    font-weight: 300;
+    line-height: 1.72;
+    color: var(--mid);
+  }
+
+  .bio-vr {
+    background: var(--rule);
+  }
+
+  .bio-right {
+    padding: 44px 48px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 12px;
+  }
+
+  .bio-cta-label {
+    font-family: "Barlow Condensed", sans-serif;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--mid);
+  }
+
+  .bio-cta-hl {
+    margin-bottom: 20px;
+    font-family: "Bebas Neue", sans-serif;
+    font-size: clamp(32px, 3.5vw, 48px);
+    letter-spacing: 0.03em;
+    line-height: 0.92;
+    color: var(--ink);
+  }
+
+  .bio-cta-hl .a {
+    color: var(--blue);
+  }
+
+  .bio-btn {
+    width: fit-content;
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    text-decoration: none;
+    border-bottom: 1px solid var(--ink);
+    padding-bottom: 2px;
+    color: var(--ink);
+    font-family: "Barlow Condensed", sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    transition: color 240ms ease, border-color 240ms ease;
+  }
+
+  .bio-btn:hover {
+    color: var(--blue);
+    border-color: var(--blue);
+  }
+
+  .bio-arr {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--ink);
+    transition: transform 240ms ease, background 240ms ease;
+  }
+
+  .bio-btn:hover .bio-arr {
+    transform: translate(4px, -4px);
+    background: var(--blue);
+  }
+
+  .foot-bar {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .fb {
+    padding: 20px 52px;
+    border-right: 1px solid var(--rule);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  .fb:last-child {
+    border-right: none;
+  }
+
+  .fb-l {
+    font-family: "Barlow Condensed", sans-serif;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--mid);
+  }
+
+  .fb-v {
+    font-family: "Bebas Neue", sans-serif;
+    font-size: 20px;
+    letter-spacing: 0.04em;
+    color: var(--ink);
+  }
+
+  .fb-v :global(.a) {
+    color: var(--blue);
+  }
+
+  .reveal-item {
+    opacity: 0;
+    transform: translateY(16px);
+    transition: opacity 500ms ease, transform 500ms cubic-bezier(0.76, 0, 0.24, 1);
+  }
+
+  .reveal-item.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  @media (max-width: 1100px) {
+    .art-body-wrap {
+      grid-template-columns: 56px 1fr 290px;
+    }
+
+    .art-prose {
+      padding: 52px 42px 60px;
+    }
+
+    .art-sidebar {
+      padding: 52px 26px;
+    }
+  }
+
+  @media (max-width: 900px) {
+    .topbar {
+      padding: 18px 28px;
+    }
+
+    .art-header {
+      grid-template-columns: 1fr;
+    }
+
+    .ah-vr {
+      display: none;
+    }
+
+    .ah-left,
+    .ah-right {
+      padding: 34px 30px;
+    }
+
+    .art-body-wrap {
+      grid-template-columns: 1fr;
+    }
+
+    .art-rail {
+      display: none;
+    }
+
+    .art-prose {
+      max-width: 100%;
+      padding: 44px 30px 52px;
+    }
+
+    .art-sidebar {
+      position: static;
+      border-left: none;
+      border-top: 1px solid var(--rule);
+      padding: 36px 30px;
+    }
+
+    .author-bio {
+      grid-template-columns: 1fr;
+    }
+
+    .bio-vr {
+      display: none;
+    }
+
+    .bio-left {
+      padding: 34px 30px;
+    }
+
+    .bio-right {
+      padding: 0 30px 30px;
+    }
+
+    .foot-bar {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .fb {
+      padding: 16px 30px;
+    }
+
+    .fb:nth-child(2),
+    .fb:nth-child(4) {
+      border-right: none;
+    }
+
+    .fb:nth-child(3),
+    .fb:nth-child(4) {
+      border-top: 1px solid var(--rule);
+    }
+  }
+
+  @media (max-width: 600px) {
+    .topbar {
+      padding: 16px 18px;
+    }
+
+    .t-logo img {
+      width: 70px;
+    }
+
+    .t-back {
+      font-size: 11px;
+      letter-spacing: 0.16em;
+      gap: 8px;
+    }
+
+    .ah-left,
+    .ah-right {
+      padding: 26px 18px;
+    }
+
+    .ah-meta {
+      flex-wrap: wrap;
+      row-gap: 6px;
+    }
+
+    .art-hero {
+      height: 260px;
+    }
+
+    .art-prose {
+      padding: 32px 18px 46px;
+    }
+
+    .lead {
+      padding-left: 16px;
+      font-size: 16px;
+      margin-bottom: 34px;
+    }
+
+    .art-sidebar {
+      padding: 26px 18px;
+    }
+
+    .bio-left {
+      padding: 26px 18px;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .bio-right {
+      padding: 0 18px 24px;
+    }
+
+    .foot-bar {
+      grid-template-columns: 1fr;
+    }
+
+    .fb {
+      border-right: none;
+      border-top: 1px solid var(--rule);
+      padding: 14px 18px;
+    }
+
+    .fb:first-child {
+      border-top: none;
+    }
+  }
+</style>
