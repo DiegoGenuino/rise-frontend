@@ -3,10 +3,14 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
 import RiseLogo from "../../assets/shared/rise-logo.svg";
 import BlogCard from "../../components/blog/BlogCard.astro";
 import Footer from "../../sections/footer/Footer.astro";
-import { getAllBlogPosts } from "../../data/blogPosts";
+import { getBlogList } from "../../lib/sanity.blog";
 
-const posts = getAllBlogPosts();
-const [featuredPost, ...gridPosts] = posts;
+const { posts, errorMessage: blogErrorMessage } = await getBlogList();
+const featuredPostIndex = posts.findIndex((post) => post.featured);
+const normalizedFeaturedPostIndex = featuredPostIndex >= 0 ? featuredPostIndex : 0;
+const featuredPost = posts[normalizedFeaturedPostIndex];
+const gridPosts = posts.filter((_, index) => index !== normalizedFeaturedPostIndex);
+const hasPosts = posts.length > 0;
 
 const modelCategoryLabels = ["Fluencia", "Carreira", "Vocabulario", "Cultura", "Dicas"];
 
@@ -17,6 +21,10 @@ function createCategoryKey(categoryLabel: string): string {
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/(^-|-$)/g, "");
+}
+
+function createTagKey(tagLabel: string): string {
+  return createCategoryKey(tagLabel);
 }
 
 const categoriesFromPosts = Array.from(new Set(posts.map((post) => post.category)));
@@ -105,11 +113,28 @@ const totalCountFormatted = String(posts.length).padStart(3, "0");
       </section>
 
       {
+        blogErrorMessage && (
+          <p class="blog-alert" role="status">
+            {blogErrorMessage} Exibindo conteudo de contingencia enquanto o CMS se recupera.
+          </p>
+        )
+      }
+
+      {
+        !hasPosts && (
+          <p class="blog-alert blog-alert-empty" role="status">
+            Nenhum post publicado foi encontrado no momento.
+          </p>
+        )
+      }
+
+      {
         featuredPost && (
           <article
             class="featured"
             data-featured
             data-category-key={createCategoryKey(featuredPost.category)}
+            data-tag-keys={featuredPost.tags.map(createTagKey).join(",")}
           >
             <div class="feat-illo" aria-hidden="true">
               <div class="feat-ghost">01</div>
@@ -176,14 +201,15 @@ const totalCountFormatted = String(posts.length).padStart(3, "0");
             <BlogCard
               post={post}
               categoryKey={createCategoryKey(post.category)}
+              tagKeys={post.tags.map(createTagKey)}
               animationIndex={postIndex}
             />
           ))
         }
       </div>
 
-      <p id="articles-empty" class="articles-empty" hidden>
-        Nenhum artigo encontrado para esta categoria.
+      <p id="articles-empty" class="articles-empty" hidden={hasPosts}>
+        Nenhum artigo encontrado para os filtros selecionados.
       </p>
 
       <section class="nl-strip" aria-label="Inscricao em newsletter">
@@ -215,15 +241,19 @@ const totalCountFormatted = String(posts.length).padStart(3, "0");
       const countElement = document.getElementById("articles-count");
       const emptyState = document.getElementById("articles-empty");
 
-      const resolveCategoryFromUrl = () => {
+      const resolveFiltersFromUrl = () => {
         const searchParams = new URLSearchParams(window.location.search);
         const requestedCategory = (searchParams.get("category") || "all").toLowerCase();
+        const requestedTag = (searchParams.get("tag") || "").toLowerCase();
 
         const hasCategory = filterPills.some((filterPill) => {
           return (filterPill.dataset.filterKey || "") === requestedCategory;
         });
 
-        return hasCategory ? requestedCategory : "all";
+        return {
+          category: hasCategory ? requestedCategory : "all",
+          tag: requestedTag,
+        };
       };
 
       const setActivePill = (activeCategory) => {
@@ -233,13 +263,30 @@ const totalCountFormatted = String(posts.length).padStart(3, "0");
         });
       };
 
-      const applyFilter = (activeCategory) => {
+      const hasTagMatch = (rawTagKeys, activeTag) => {
+        if (!activeTag) {
+          return true;
+        }
+
+        const tagKeys = (rawTagKeys || "")
+          .split(",")
+          .map((tagKey) => tagKey.trim())
+          .filter(Boolean);
+
+        return tagKeys.includes(activeTag);
+      };
+
+      const applyFilter = (activeCategory, activeTag) => {
         let visibleArticleCount = 0;
 
         if (featuredArticle) {
           const featuredCategory = featuredArticle.dataset.categoryKey || "";
-          const shouldShowFeatured =
+          const featuredTagKeys = featuredArticle.dataset.tagKeys || "";
+          const hasFeaturedCategory =
             activeCategory === "all" || featuredCategory === activeCategory;
+          const hasFeaturedTag = hasTagMatch(featuredTagKeys, activeTag);
+          const shouldShowFeatured =
+            hasFeaturedCategory && hasFeaturedTag;
           featuredArticle.hidden = !shouldShowFeatured;
 
           if (shouldShowFeatured) {
@@ -249,7 +296,10 @@ const totalCountFormatted = String(posts.length).padStart(3, "0");
 
         articleCards.forEach((articleCard) => {
           const cardCategory = articleCard.dataset.categoryKey || "";
-          const shouldShowCard = activeCategory === "all" || cardCategory === activeCategory;
+          const cardTagKeys = articleCard.dataset.tagKeys || "";
+          const hasCardCategory = activeCategory === "all" || cardCategory === activeCategory;
+          const hasCardTag = hasTagMatch(cardTagKeys, activeTag);
+          const shouldShowCard = hasCardCategory && hasCardTag;
           articleCard.hidden = !shouldShowCard;
 
           if (shouldShowCard) {
@@ -258,6 +308,9 @@ const totalCountFormatted = String(posts.length).padStart(3, "0");
         });
 
         if (emptyState) {
+          emptyState.textContent = activeTag
+            ? "Nenhum artigo encontrado para esta combinacao de categoria e tag."
+            : "Nenhum artigo encontrado para esta categoria.";
           emptyState.hidden = visibleArticleCount > 0;
         }
 
@@ -268,13 +321,19 @@ const totalCountFormatted = String(posts.length).padStart(3, "0");
         setActivePill(activeCategory);
       };
 
-      const updateUrl = (activeCategory) => {
+      const updateUrl = (activeCategory, activeTag) => {
         const currentUrl = new URL(window.location.href);
 
         if (activeCategory === "all") {
           currentUrl.searchParams.delete("category");
         } else {
           currentUrl.searchParams.set("category", activeCategory);
+        }
+
+        if (!activeTag) {
+          currentUrl.searchParams.delete("tag");
+        } else {
+          currentUrl.searchParams.set("tag", activeTag);
         }
 
         const nextUrl = `${currentUrl.pathname}${currentUrl.search}${currentUrl.hash}`;
@@ -285,14 +344,16 @@ const totalCountFormatted = String(posts.length).padStart(3, "0");
         filterPill.addEventListener("click", (event) => {
           event.preventDefault();
           const activeCategory = filterPill.dataset.filterKey || "all";
+          const activeTag = "";
 
-          updateUrl(activeCategory);
-          applyFilter(activeCategory);
+          updateUrl(activeCategory, activeTag);
+          applyFilter(activeCategory, activeTag);
         });
       });
 
       window.addEventListener("popstate", () => {
-        applyFilter(resolveCategoryFromUrl());
+        const { category, tag } = resolveFiltersFromUrl();
+        applyFilter(category, tag);
       });
 
       const revealObserver = new IntersectionObserver(
@@ -316,7 +377,8 @@ const totalCountFormatted = String(posts.length).padStart(3, "0");
         revealObserver.observe(articleCard);
       });
 
-      applyFilter(resolveCategoryFromUrl());
+      const initialFilters = resolveFiltersFromUrl();
+      applyFilter(initialFilters.category, initialFilters.tag);
     })();
   </script>
 </BaseLayout>
@@ -329,6 +391,22 @@ const totalCountFormatted = String(posts.length).padStart(3, "0");
       radial-gradient(circle at 86% 82%, rgba(17, 17, 32, 0.08), transparent 40%),
       #f6f4ef;
     color: #111120;
+  }
+
+  .blog-alert {
+    margin: 18px 52px 0;
+    border: 1px solid rgba(17, 17, 32, 0.16);
+    background: rgba(17, 17, 32, 0.04);
+    padding: 12px 16px;
+    font-family: "DM Sans", sans-serif;
+    font-size: 13px;
+    font-weight: 400;
+    line-height: 1.6;
+    color: #4c4c63;
+  }
+
+  .blog-alert-empty {
+    margin-bottom: 8px;
   }
 
   .topbar {

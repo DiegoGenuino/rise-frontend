@@ -1,3 +1,5 @@
+import type {SanityPortableBodyNode} from "../lib/sanity.types";
+
 export interface BlogAuthor {
   name: string;
   role: string;
@@ -15,6 +17,13 @@ export interface BlogSidebarCta {
 export interface BlogFooterStat {
   label: string;
   valueHtml: string;
+}
+
+export interface BlogPostHeroImage {
+  alt: string;
+  url: string;
+  width?: number;
+  height?: number;
 }
 
 export interface NumberedListItem {
@@ -60,15 +69,22 @@ export interface BlogPost {
   slug: string;
   title: string;
   titleLines?: string[];
+  featured?: boolean;
   excerpt: string;
   category: string;
   publishDate: string;
   publishDateLabel: string;
   readingTimeMinutes: number;
+  summaryPoints?: string[];
   seoDescription?: string;
+  seoTitle?: string;
   seoImage?: string;
+  canonicalUrl?: string;
+  noIndex?: boolean;
+  heroImage?: BlogPostHeroImage;
   heroGhostWord?: string;
   lead: string;
+  portableBody?: SanityPortableBodyNode[];
   author: BlogAuthor;
   sections: BlogSection[];
   tags: string[];

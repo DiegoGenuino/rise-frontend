@@ -2,38 +2,159 @@
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import RiseLogo from "../../assets/shared/rise-logo.svg";
 import type { BlogPost } from "../../types/blog";
-import { getAllBlogPosts, getBlogPostBySlug, getRelatedPosts } from "../../data/blogPosts";
+import type { SanityPortableBodyNode, SanityPortableTextBlock } from "../../lib/sanity.types";
+import { getBlogPostBySlug, getBlogSlugs } from "../../lib/sanity.blog";
+import PortableRichContent from "../../components/blog/portable/PortableRichContent.astro";
 
-export function getStaticPaths() {
-  return getAllBlogPosts().map((post) => ({
-    params: { slug: post.slug },
+export async function getStaticPaths() {
+  const slugs = await getBlogSlugs();
+
+  return slugs.map((slug) => ({
+    params: { slug },
   }));
 }
 
+type TocLevel = "h2" | "h3" | "h4";
+
+interface ArticleTocItem {
+  id: string;
+  label: string;
+  level: TocLevel;
+}
+
+function slugifyHeadingValue(value: string): string {
+  return value
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)/g, "")
+    .slice(0, 96);
+}
+
+function extractPortableHeadingLabel(block: SanityPortableTextBlock): string {
+  return (block.children || [])
+    .map((child) => child.text || "")
+    .join("")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function resolvePortableHeadingId(block: SanityPortableTextBlock, label: string): string {
+  const normalizedKey = block._key ? slugifyHeadingValue(block._key) : "";
+  if (normalizedKey) {
+    return `pt-h-${normalizedKey}`;
+  }
+
+  const normalizedLabel = slugifyHeadingValue(label);
+  return normalizedLabel || "pt-heading";
+}
+
+function buildBodyTocItems(body: SanityPortableBodyNode[] | undefined): ArticleTocItem[] {
+  if (!Array.isArray(body) || body.length === 0) {
+    return [];
+  }
+
+  let fallbackIndex = 0;
+
+  return body.flatMap((node) => {
+    if (node._type !== "block") {
+      return [];
+    }
+
+    const level = node.style;
+    if (level !== "h2" && level !== "h3" && level !== "h4") {
+      return [];
+    }
+
+    const label = extractPortableHeadingLabel(node);
+    if (!label) {
+      return [];
+    }
+
+    const id = resolvePortableHeadingId(node, label) || `pt-heading-${++fallbackIndex}`;
+    return [{ id, label, level } satisfies ArticleTocItem];
+  });
+}
+
 const { slug } = Astro.params;
-const post = slug ? getBlogPostBySlug(slug) : undefined;
+const {
+  post,
+  relatedPosts,
+  errorMessage: blogErrorMessage,
+} = slug
+  ? await getBlogPostBySlug(slug)
+  : {
+      post: undefined,
+      relatedPosts: [],
+      errorMessage: null,
+    };
 
 if (!post) {
   return Astro.redirect("/404");
 }
 
 const currentPost: BlogPost = post;
-const relatedPosts = getRelatedPosts(currentPost, 3);
 const titleLines =
   currentPost.titleLines && currentPost.titleLines.length > 0
     ? currentPost.titleLines
     : [currentPost.title];
+const hasPortableBody = Boolean(currentPost.portableBody && currentPost.portableBody.length > 0);
+const hasLegacySections = currentPost.sections.length > 0;
+const hasSectionNavigation = hasLegacySections && !hasPortableBody;
+const bodyTocItems = hasPortableBody ? buildBodyTocItems(currentPost.portableBody || []) : [];
+const legacyTocItems: ArticleTocItem[] = hasSectionNavigation
+  ? currentPost.sections.map((section) => ({
+      id: section.id,
+      label: section.tocLabel,
+      level: "h2",
+    }))
+  : [];
+const tocItems = hasPortableBody ? bodyTocItems : legacyTocItems;
+const hasToc = tocItems.length > 0;
+const summaryPoints = (currentPost.summaryPoints || []).filter(Boolean);
+const hasHeroImage = Boolean(currentPost.heroImage?.url);
+const heroImageAlt = currentPost.heroImage?.alt || `Imagem do post ${currentPost.title}`;
 const linkedInShareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(
   Astro.url.href,
 )}`;
+const articleImageUrl = new URL(currentPost.seoImage || "/favicon.svg", Astro.url).toString();
+const articleTags = currentPost.tags.slice(0, 6);
+const articlePublishedIso = `${currentPost.publishDate}T00:00:00.000Z`;
+const articleJsonLd = JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "Article",
+  headline: currentPost.title,
+  description: currentPost.seoDescription || currentPost.excerpt,
+  image: [articleImageUrl],
+  datePublished: articlePublishedIso,
+  dateModified: articlePublishedIso,
+  author: {
+    "@type": "Person",
+    name: currentPost.author.name,
+  },
+  publisher: {
+    "@type": "Organization",
+    name: "Rise Idiomas",
+    logo: {
+      "@type": "ImageObject",
+      url: new URL("/favicon.svg", Astro.url).toString(),
+    },
+  },
+  mainEntityOfPage: Astro.url.href,
+  articleSection: currentPost.category,
+  keywords: currentPost.tags.join(", "),
+  wordCount: Math.max(currentPost.readingTimeMinutes * 200, 200),
+});
 ---
 
 <BaseLayout
   seo={{
-    title: currentPost.title,
+    title: currentPost.seoTitle || currentPost.title,
     description: currentPost.seoDescription || currentPost.excerpt,
     type: "article",
     image: currentPost.seoImage || "/favicon.svg",
+    canonicalUrl: currentPost.canonicalUrl,
   }}
 >
   <Fragment slot="head">
@@ -43,6 +164,21 @@ const linkedInShareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${
       href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@300;400;500;600&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap"
       rel="stylesheet"
     />
+    <meta property="article:published_time" content={articlePublishedIso} />
+    <meta property="og:article:published_time" content={articlePublishedIso} />
+    <meta property="article:section" content={currentPost.category} />
+    <meta property="og:article:section" content={currentPost.category} />
+    <meta property="article:author" content={currentPost.author.name} />
+    {
+      articleTags.map((tag) => (
+        <Fragment>
+          <meta property="article:tag" content={tag} />
+          <meta property="og:article:tag" content={tag} />
+        </Fragment>
+      ))
+    }
+    {currentPost.noIndex && <meta name="robots" content="noindex, nofollow" />}
+    <script type="application/ld+json" set:html={articleJsonLd}></script>
   </Fragment>
 
   <div class="blog-shell">
@@ -67,6 +203,14 @@ const linkedInShareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${
     </header>
 
     <article>
+      {
+        blogErrorMessage && (
+          <p class="blog-alert" role="status">
+            {blogErrorMessage} Exibindo conteudo de contingencia para este artigo.
+          </p>
+        )
+      }
+
       <header class="art-header">
         <div class="ah-left">
           <div class="ah-meta">
@@ -136,96 +280,128 @@ const linkedInShareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${
       </header>
 
       <div class="art-hero">
-        <div class="art-hero-ghost" aria-hidden="true">{currentPost.heroGhostWord || "FALAR"}</div>
-        <svg viewBox="0 0 520 280" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Ilustracao sobre speaking e fluencia">
-          <path d="M100 140 C100 80 148 40 200 40 C220 40 238 48 252 62 L252 218 C238 232 220 240 200 240 C148 240 100 200 100 140Z" fill="#E8E6DF" stroke="rgba(17,17,32,.1)" stroke-width="1"></path>
-          <path d="M130 100 C138 90 152 92 158 102" stroke="rgba(17,17,32,.12)" stroke-width="1.2" fill="none"></path>
-          <path d="M120 130 C132 118 148 122 152 134" stroke="rgba(17,17,32,.1)" stroke-width="1.2" fill="none"></path>
-          <path d="M132 162 C144 150 162 154 164 168" stroke="rgba(17,17,32,.1)" stroke-width="1.2" fill="none"></path>
-          <path d="M140 192 C154 180 172 184 172 198" stroke="rgba(17,17,32,.08)" stroke-width="1.2" fill="none"></path>
-          <path d="M252 62 C266 48 284 40 304 40 C356 40 404 80 404 140 C404 200 356 240 304 240 C284 240 266 232 252 218 Z" fill="#2B2BA8" opacity=".12" stroke="rgba(43,43,168,.25)" stroke-width="1"></path>
-          <path d="M280 100 C288 90 302 92 308 102" stroke="rgba(43,43,168,.3)" stroke-width="1.2" fill="none"></path>
-          <path d="M300 128 C312 116 328 120 332 132" stroke="rgba(43,43,168,.25)" stroke-width="1.2" fill="none"></path>
-          <path d="M290 162 C302 150 320 154 322 168" stroke="rgba(43,43,168,.2)" stroke-width="1.2" fill="none"></path>
-          <line x1="252" y1="32" x2="252" y2="248" stroke="rgba(17,17,32,.3)" stroke-width="1.5" stroke-dasharray="5 4"></line>
-          <text x="176" y="268" text-anchor="middle" font-family="Barlow Condensed, sans-serif" font-size="11" fill="#8A8A9E" letter-spacing="2">ENTENDE</text>
-          <text x="328" y="268" text-anchor="middle" font-family="Barlow Condensed, sans-serif" font-size="11" fill="#2B2BA8" letter-spacing="2">PRODUZ?</text>
-          <rect x="239" y="120" width="26" height="20" rx="3" fill="white" stroke="rgba(17,17,32,.2)" stroke-width="1"></rect>
-          <path d="M244 120 C244 111 260 111 260 120" stroke="rgba(17,17,32,.2)" stroke-width="1.2" fill="none"></path>
-          <circle cx="252" cy="130" r="3" fill="rgba(17,17,32,.25)"></circle>
-          <path d="M420 110 C432 124 432 156 420 170" stroke="rgba(43,43,168,.3)" stroke-width="1.5" fill="none"></path>
-          <path d="M428 98 C446 116 446 164 428 182" stroke="rgba(43,43,168,.2)" stroke-width="1.2" fill="none"></path>
-          <path d="M80 136 C80 128 88 128 88 136 C88 144 80 144 80 136Z" stroke="rgba(17,17,32,.2)" stroke-width="1" fill="none"></path>
-          <line x1="76" y1="132" x2="92" y2="140" stroke="rgba(17,17,32,.25)" stroke-width="1.2"></line>
-        </svg>
+        {
+          hasHeroImage ? (
+            <img
+              class="art-hero-image"
+              src={currentPost.heroImage?.url}
+              alt={heroImageAlt}
+              width={currentPost.heroImage?.width}
+              height={currentPost.heroImage?.height}
+              loading="eager"
+              decoding="async"
+            />
+          ) : (
+            <>
+              <div class="art-hero-ghost" aria-hidden="true">{currentPost.heroGhostWord || "FALAR"}</div>
+              <svg viewBox="0 0 520 280" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Ilustracao sobre speaking e fluencia">
+                <path d="M100 140 C100 80 148 40 200 40 C220 40 238 48 252 62 L252 218 C238 232 220 240 200 240 C148 240 100 200 100 140Z" fill="#E8E6DF" stroke="rgba(17,17,32,.1)" stroke-width="1"></path>
+                <path d="M130 100 C138 90 152 92 158 102" stroke="rgba(17,17,32,.12)" stroke-width="1.2" fill="none"></path>
+                <path d="M120 130 C132 118 148 122 152 134" stroke="rgba(17,17,32,.1)" stroke-width="1.2" fill="none"></path>
+                <path d="M132 162 C144 150 162 154 164 168" stroke="rgba(17,17,32,.1)" stroke-width="1.2" fill="none"></path>
+                <path d="M140 192 C154 180 172 184 172 198" stroke="rgba(17,17,32,.08)" stroke-width="1.2" fill="none"></path>
+                <path d="M252 62 C266 48 284 40 304 40 C356 40 404 80 404 140 C404 200 356 240 304 240 C284 240 266 232 252 218 Z" fill="#2B2BA8" opacity=".12" stroke="rgba(43,43,168,.25)" stroke-width="1"></path>
+                <path d="M280 100 C288 90 302 92 308 102" stroke="rgba(43,43,168,.3)" stroke-width="1.2" fill="none"></path>
+                <path d="M300 128 C312 116 328 120 332 132" stroke="rgba(43,43,168,.25)" stroke-width="1.2" fill="none"></path>
+                <path d="M290 162 C302 150 320 154 322 168" stroke="rgba(43,43,168,.2)" stroke-width="1.2" fill="none"></path>
+                <line x1="252" y1="32" x2="252" y2="248" stroke="rgba(17,17,32,.3)" stroke-width="1.5" stroke-dasharray="5 4"></line>
+                <text x="176" y="268" text-anchor="middle" font-family="Barlow Condensed, sans-serif" font-size="11" fill="#8A8A9E" letter-spacing="2">ENTENDE</text>
+                <text x="328" y="268" text-anchor="middle" font-family="Barlow Condensed, sans-serif" font-size="11" fill="#2B2BA8" letter-spacing="2">PRODUZ?</text>
+                <rect x="239" y="120" width="26" height="20" rx="3" fill="white" stroke="rgba(17,17,32,.2)" stroke-width="1"></rect>
+                <path d="M244 120 C244 111 260 111 260 120" stroke="rgba(17,17,32,.2)" stroke-width="1.2" fill="none"></path>
+                <circle cx="252" cy="130" r="3" fill="rgba(17,17,32,.25)"></circle>
+                <path d="M420 110 C432 124 432 156 420 170" stroke="rgba(43,43,168,.3)" stroke-width="1.5" fill="none"></path>
+                <path d="M428 98 C446 116 446 164 428 182" stroke="rgba(43,43,168,.2)" stroke-width="1.2" fill="none"></path>
+                <path d="M80 136 C80 128 88 128 88 136 C88 144 80 144 80 136Z" stroke="rgba(17,17,32,.2)" stroke-width="1" fill="none"></path>
+                <line x1="76" y1="132" x2="92" y2="140" stroke="rgba(17,17,32,.25)" stroke-width="1.2"></line>
+              </svg>
+            </>
+          )
+        }
       </div>
 
-      <div class="art-body-wrap">
-        <div class="art-rail" aria-hidden="true">
-          {
-            currentPost.sections.map((section, index) => (
-              <div class="rail-num" id={`rn-${section.id}`}>{String(index + 1).padStart(2, "0")}</div>
-            ))
-          }
-        </div>
+      <div class={`art-body-wrap ${hasSectionNavigation ? "" : "art-body-wrap-no-sections"}`}>
+        {
+          hasSectionNavigation && (
+            <div class="art-rail" aria-hidden="true">
+              {
+                currentPost.sections.map((section, index) => (
+                  <div class="rail-num" id={`rn-${section.id}`}>{String(index + 1).padStart(2, "0")}</div>
+                ))
+              }
+            </div>
+          )
+        }
 
         <div class="art-prose" id="prose">
           <p class="lead">{currentPost.lead}</p>
 
           {
-            currentPost.sections.map((section) => (
-              <section id={section.id}>
-                <h2 set:html={section.headingHtml}></h2>
-                {
-                  section.blocks.map((block) => {
-                    if (block.type === "paragraph") {
-                      return <p set:html={block.content}></p>;
-                    }
+            summaryPoints.length > 0 && (
+              <ul class="summary-points">
+                {summaryPoints.map((point) => <li>{point}</li>)}
+              </ul>
+            )
+          }
 
-                    if (block.type === "subheading") {
-                      return <h3>{block.content}</h3>;
-                    }
+          {
+            hasPortableBody ? (
+              <PortableRichContent body={currentPost.portableBody || []} />
+            ) : (
+              currentPost.sections.map((section) => (
+                <section id={section.id}>
+                  <h2 set:html={section.headingHtml}></h2>
+                  {
+                    section.blocks.map((block) => {
+                      if (block.type === "paragraph") {
+                        return <Fragment set:html={block.content}></Fragment>;
+                      }
 
-                    if (block.type === "callout") {
-                      return (
-                        <div class="callout">
-                          <div class="callout-label">{block.label}</div>
-                          <p>{block.content}</p>
-                        </div>
-                      );
-                    }
+                      if (block.type === "subheading") {
+                        return <h3>{block.content}</h3>;
+                      }
 
-                    if (block.type === "pullquote") {
-                      return (
-                        <div class="pullquote">
-                          <div class="pq-text">{block.quote}</div>
-                          <div class="pq-attr">{block.attribution}</div>
-                        </div>
-                      );
-                    }
+                      if (block.type === "callout") {
+                        return (
+                          <div class="callout">
+                            <div class="callout-label">{block.label}</div>
+                            <div class="callout-content" set:html={block.content}></div>
+                          </div>
+                        );
+                      }
 
-                    if (block.type === "numbered-list") {
-                      return (
-                        <ol>
-                          {
-                            block.items.map((item, itemIndex) => (
-                              <li>
-                                <span class="li-num">{String(itemIndex + 1).padStart(2, "0")}</span>
-                                <span>
-                                  <strong>{item.title}</strong> {item.description}
-                                </span>
-                              </li>
-                            ))
-                          }
-                        </ol>
-                      );
-                    }
+                      if (block.type === "pullquote") {
+                        return (
+                          <div class="pullquote">
+                            <div class="pq-text">{block.quote}</div>
+                            <div class="pq-attr">{block.attribution}</div>
+                          </div>
+                        );
+                      }
 
-                    return <hr class="art-rule" />;
-                  })
-                }
-              </section>
-            ))
+                      if (block.type === "numbered-list") {
+                        return (
+                          <ol>
+                            {
+                              block.items.map((item, itemIndex) => (
+                                <li>
+                                  <span class="li-num">{String(itemIndex + 1).padStart(2, "0")}</span>
+                                  <span>
+                                    <strong>{item.title}</strong> {item.description}
+                                  </span>
+                                </li>
+                              ))
+                            }
+                          </ol>
+                        );
+                      }
+
+                      return <hr class="art-rule" />;
+                    })
+                  }
+                </section>
+              ))
+            )
           }
 
           <div class="art-tags">
@@ -235,19 +411,28 @@ const linkedInShareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${
         </div>
 
         <aside class="art-sidebar">
-          <div class="toc-label">Neste artigo</div>
-          <ul class="toc-list">
-            {
-              currentPost.sections.map((section, index) => (
-                <li class="toc-item">
-                  <a href={`#${section.id}`} class={`toc-link ${index === 0 ? "active" : ""}`}>
-                    <span class="toc-n">{String(index + 1).padStart(2, "0")}</span>
-                    {section.tocLabel}
-                  </a>
-                </li>
-              ))
-            }
-          </ul>
+          {
+            hasToc && (
+              <>
+                <div class="toc-label">Neste artigo</div>
+                <ul class="toc-list">
+                  {
+                    tocItems.map((item, index) => (
+                      <li class="toc-item">
+                        <a
+                          href={`#${item.id}`}
+                          class={`toc-link toc-level-${item.level} ${index === 0 ? "active" : ""}`}
+                        >
+                          <span class="toc-n">{String(index + 1).padStart(2, "0")}</span>
+                          {item.label}
+                        </a>
+                      </li>
+                    ))
+                  }
+                </ul>
+              </>
+            )
+          }
 
           <div class="sb-cta">
             <div class="sb-cta-label">{currentPost.sidebarCta.label}</div>
@@ -390,7 +575,7 @@ const linkedInShareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${
       });
 
       const revealTargets = document.querySelectorAll(
-        ".art-prose h2, .art-prose h3, .art-prose p, .callout, .pullquote, .art-prose ol, .art-rule",
+        ".art-prose h2, .art-prose h3, .art-prose p, .callout, .pullquote, .art-prose ol, .art-rule, .portable-heading, .portable-paragraph, .portable-callout, .portable-code-block, .portable-table-wrap, .portable-embed, .portable-image, .portable-blockquote, .portable-list-bullet, .portable-list-number",
       );
 
       const revealObserver = new IntersectionObserver(
@@ -461,10 +646,33 @@ const linkedInShareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${
     --rule-strong: rgba(17, 17, 32, 0.2);
   }
 
+  :global(html),
+  :global(body) {
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+
   .blog-shell {
     background: var(--cream);
     color: var(--ink);
+    width: 100%;
     overflow-x: hidden;
+  }
+
+  article {
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+
+  .blog-alert {
+    margin: 20px 44px 0;
+    border: 1px solid var(--rule-strong);
+    background: rgba(17, 17, 32, 0.04);
+    padding: 12px 14px;
+    font-family: "DM Sans", sans-serif;
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--mid);
   }
 
   #blog-progress {
@@ -531,6 +739,18 @@ const linkedInShareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${
     min-height: 220px;
   }
 
+  .art-header,
+  .ah-left,
+  .ah-right,
+  .art-body-wrap,
+  .art-prose,
+  .art-sidebar,
+  .author-bio,
+  .bio-left,
+  .bio-right {
+    min-width: 0;
+  }
+
   .ah-left {
     padding: 52px 52px 44px;
     display: flex;
@@ -587,6 +807,8 @@ const linkedInShareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${
     font-size: clamp(52px, 7.5vw, 110px);
     letter-spacing: 0.03em;
     line-height: 0.88;
+    overflow-wrap: anywhere;
+    word-break: break-word;
     animation: lineup 840ms cubic-bezier(0.76, 0, 0.24, 1) both;
   }
 
@@ -732,9 +954,18 @@ const linkedInShareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${
     z-index: 2;
   }
 
+  .art-hero-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    display: block;
+  }
+
   .art-body-wrap {
     display: grid;
-    grid-template-columns: 56px 1fr 340px;
+    grid-template-columns: 56px minmax(0, 760px) minmax(260px, 320px);
+    justify-content: center;
     border-bottom: 1px solid var(--rule);
     align-items: start;
   }
@@ -768,19 +999,99 @@ const linkedInShareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${
     color: var(--blue);
   }
 
+  .art-body-wrap-no-sections {
+    grid-template-columns: minmax(0, 760px) minmax(260px, 320px);
+    justify-content: center;
+  }
+
+  .summary-points {
+    margin: -12px auto 34px;
+    width: min(100%, 690px);
+    box-sizing: border-box;
+    padding-left: 22px;
+    border-left: 1px solid var(--rule);
+  }
+
+  .summary-points li {
+    margin: 8px 0;
+    font-family: "DM Sans", sans-serif;
+    font-size: 14px;
+    line-height: 1.6;
+    color: rgba(17, 17, 32, 0.75);
+  }
+
   .art-prose {
+    box-sizing: border-box;
+    width: 100%;
     max-width: 760px;
-    padding: 52px 60px 64px;
+    padding: 56px 48px 68px;
+    margin: 0 auto;
+  }
+
+  .art-prose > * {
+    min-width: 0;
   }
 
   .lead {
+    width: min(100%, 690px);
+    box-sizing: border-box;
     font-size: 19px;
     font-weight: 300;
     line-height: 1.72;
     color: var(--ink);
-    margin-bottom: 48px;
+    margin: 0 auto 48px;
     border-left: 2px solid var(--blue);
     padding-left: 24px;
+  }
+
+  .art-prose h2,
+  .art-prose h3,
+  .art-prose ol,
+  .callout,
+  .pullquote,
+  .art-rule,
+  .summary-points,
+  .lead,
+  .art-prose :global(.portable-paragraph),
+  .art-prose :global(.portable-heading),
+  .art-prose :global(.portable-list-bullet),
+  .art-prose :global(.portable-list-number),
+  .art-prose :global(.portable-blockquote),
+  .art-prose :global(.portable-callout),
+  .art-prose :global(.portable-code-block),
+  .art-prose :global(.portable-table-wrap),
+  .art-prose :global(.portable-embed),
+  .art-prose :global(.portable-divider) {
+    width: min(100%, 690px);
+    margin-left: auto;
+    margin-right: auto;
+    box-sizing: border-box;
+  }
+
+  .art-prose :global(img),
+  .art-prose :global(svg),
+  .art-prose :global(video),
+  .art-prose :global(canvas) {
+    max-width: 100%;
+    height: auto;
+  }
+
+  .art-prose :global(iframe) {
+    width: 100%;
+    max-width: 100%;
+    border: 0;
+  }
+
+  .art-prose :global(pre),
+  .art-prose :global(table) {
+    max-width: 100%;
+  }
+
+  .art-prose p,
+  .lead,
+  .art-prose :global(.portable-paragraph),
+  .art-prose :global(.portable-blockquote) {
+    overflow-wrap: anywhere;
   }
 
   .art-prose h2 {
@@ -808,9 +1119,9 @@ const linkedInShareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${
   }
 
   .art-prose p {
-    font-size: 16px;
+    font-size: 17px;
     font-weight: 300;
-    line-height: 1.82;
+    line-height: 1.9;
     color: rgba(17, 17, 32, 0.75);
     margin-bottom: 24px;
   }
@@ -842,9 +1153,13 @@ const linkedInShareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${
     color: var(--blue);
   }
 
-  .callout p {
+  .callout-content :global(p) {
     margin-bottom: 0;
     color: var(--ink);
+  }
+
+  .callout-content :global(p + p) {
+    margin-top: 14px;
   }
 
   .pullquote {
@@ -957,6 +1272,10 @@ const linkedInShareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${
     position: sticky;
     top: 74px;
     align-self: start;
+    max-height: calc(100vh - 96px);
+    max-height: calc(100dvh - 96px);
+    overflow-y: auto;
+    overscroll-behavior: contain;
   }
 
   .toc-label,
@@ -1007,6 +1326,21 @@ const linkedInShareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${
   .toc-link:hover,
   .toc-link.active {
     color: var(--ink);
+  }
+
+  .toc-level-h3 {
+    padding-left: 14px;
+    font-size: 12px;
+  }
+
+  .toc-level-h4 {
+    padding-left: 28px;
+    font-size: 11px;
+  }
+
+  .toc-level-h3 .toc-n,
+  .toc-level-h4 .toc-n {
+    opacity: 0.72;
   }
 
   .toc-n {
@@ -1279,7 +1613,11 @@ const linkedInShareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${
 
   @media (max-width: 1100px) {
     .art-body-wrap {
-      grid-template-columns: 56px 1fr 290px;
+      grid-template-columns: 56px minmax(0, 700px) 290px;
+    }
+
+    .art-body-wrap-no-sections {
+      grid-template-columns: minmax(0, 700px) 290px;
     }
 
     .art-prose {
@@ -1313,6 +1651,10 @@ const linkedInShareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${
       grid-template-columns: 1fr;
     }
 
+    .art-body-wrap-no-sections {
+      grid-template-columns: 1fr;
+    }
+
     .art-rail {
       display: none;
     }
@@ -1327,6 +1669,9 @@ const linkedInShareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${
       border-left: none;
       border-top: 1px solid var(--rule);
       padding: 36px 30px;
+      max-height: none;
+      overflow: visible;
+      overscroll-behavior: auto;
     }
 
     .author-bio {
