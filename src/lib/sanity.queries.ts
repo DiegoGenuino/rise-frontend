@@ -7,6 +7,12 @@ const BLOG_CARD_PROJECTION = `
   "categorySlug": category->slug.current,
   publishedAt,
   readingTimeMinutes,
+  "coverImage": coverImage{
+    alt,
+    "url": asset->url,
+    "width": asset->metadata.dimensions.width,
+    "height": asset->metadata.dimensions.height
+  },
   "seoDescription": coalesce(seo.description, excerpt),
   "seoImage": coalesce(seo.image.asset->url, coverImage.asset->url),
   heroGhostWord,
@@ -15,7 +21,13 @@ const BLOG_CARD_PROJECTION = `
     name,
     role,
     initials,
-    bio
+    bio,
+    "avatar": avatar{
+      alt,
+      "url": asset->url,
+      "width": asset->metadata.dimensions.width,
+      "height": asset->metadata.dimensions.height
+    }
   },
   "tags": tags[]->title
 `;
@@ -28,6 +40,27 @@ export const BLOG_POST_SLUGS_QUERY = `
   ]
   | order(publishedAt desc)
   {
+    "slug": slug.current
+  }
+`;
+
+export const BLOG_CATEGORY_FILTERS_QUERY = `
+  *[
+    _type == "category" &&
+    defined(title) &&
+    !(_id in path("drafts.**")) &&
+    count(
+      *[
+        _type == "post" &&
+        defined(slug.current) &&
+        !(_id in path("drafts.**")) &&
+        references(^._id)
+      ]
+    ) > 0
+  ]
+  | order(title asc)
+  {
+    title,
     "slug": slug.current
   }
 `;
