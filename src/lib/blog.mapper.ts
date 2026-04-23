@@ -46,7 +46,7 @@ const defaultAuthor: BlogAuthor = {
   name: "Equipe Rise Idiomas",
   role: "Time editorial",
   initials: "RI",
-  bio: "Conteudo produzido pelo time da Rise Idiomas.",
+  bio: "Conteúdo produzido pelo time da Rise Idiomas.",
 };
 
 const defaultSidebarCta: BlogSidebarCta = {
@@ -161,6 +161,7 @@ function mapAuthor(author?: SanityAuthor): BlogAuthor {
     role: author.role,
     initials: author.initials,
     bio: author.bio,
+    avatar: mapHeroImage(author.avatar, `Foto de ${author.name}`),
   };
 }
 
@@ -193,13 +194,16 @@ function mapFooterStat(stat: SanityFooterStat): BlogFooterStat {
   };
 }
 
-function mapHeroImage(heroImage?: SanityHeroImage): BlogPostHeroImage | undefined {
+function mapHeroImage(
+  heroImage?: SanityHeroImage,
+  fallbackAlt = "Imagem do artigo",
+): BlogPostHeroImage | undefined {
   if (!heroImage?.url) {
     return undefined;
   }
 
   return {
-    alt: heroImage.alt || "Imagem do artigo",
+    alt: heroImage.alt || fallbackAlt,
     url: heroImage.url,
     width: heroImage.width,
     height: heroImage.height,
@@ -328,6 +332,7 @@ function mapBasePostData(post: SanityPostCardDocument): Omit<BlogPost, "lead" | 
     seoImage: post.seoImage,
     canonicalUrl: undefined,
     noIndex: undefined,
+    coverImage: mapHeroImage(post.coverImage, `Capa do post ${post.title || "artigo"}`),
     heroImage: mapHeroImage(post.heroImage),
     heroGhostWord: post.heroGhostWord,
     portableBody: [],
