@@ -1,5 +1,6 @@
 import type {BlogPost} from "../types/blog";
 import {
+  BLOG_CATEGORY_FILTERS_QUERY,
   BLOG_POST_BY_SLUG_QUERY,
   BLOG_POST_LIST_QUERY,
   BLOG_POST_SLUGS_QUERY,
@@ -8,6 +9,7 @@ import {
 } from "./sanity.queries";
 import {isSanityConfigured, sanityClient} from "./sanity.client";
 import type {
+  SanityCategoryFilterDocument,
   SanityPostCardDocument,
   SanityPostDocument,
   SanitySlugDocument,
@@ -19,6 +21,7 @@ const SANITY_CONFIG_ERROR_MESSAGE = "Sanity nao esta configurado neste ambiente.
 
 export interface BlogListResult {
   posts: BlogPost[];
+  categoryFilters: string[];
   errorMessage: string | null;
 }
 
@@ -36,26 +39,54 @@ async function fetchPublishedPostCards(): Promise<SanityPostCardDocument[]> {
   return sanityClient.fetch<SanityPostCardDocument[]>(BLOG_POST_LIST_QUERY);
 }
 
+async function fetchPublishedCategoryFilters(): Promise<SanityCategoryFilterDocument[]> {
+  if (!sanityClient) {
+    return [];
+  }
+
+  return sanityClient.fetch<SanityCategoryFilterDocument[]>(BLOG_CATEGORY_FILTERS_QUERY);
+}
+
 export async function getBlogList(): Promise<BlogListResult> {
   if (!isSanityConfigured || !sanityClient) {
     return {
       posts: [],
+      categoryFilters: [],
       errorMessage: SANITY_CONFIG_ERROR_MESSAGE,
     };
   }
 
   try {
-    const sanityPosts = await fetchPublishedPostCards();
+    const [sanityPosts, sanityCategoryFilters] = await Promise.all([
+      fetchPublishedPostCards(),
+      fetchPublishedCategoryFilters().catch((error) => {
+        console.error("Erro ao buscar categorias de filtro no Sanity", error);
+        return [];
+      }),
+    ]);
+
     const mappedPosts = sanityPosts.map(mapSanityPostCard);
+    const fallbackCategoryFilters = Array.from(
+      new Set(mappedPosts.map((post) => post.category).filter(Boolean)),
+    );
+    const categoryFilters = Array.from(
+      new Set(
+        sanityCategoryFilters
+          .map((categoryFilter) => categoryFilter.title?.trim())
+          .filter(Boolean) as string[],
+      ),
+    );
 
     return {
       posts: sortPostsByDate(mappedPosts),
+      categoryFilters: categoryFilters.length > 0 ? categoryFilters : fallbackCategoryFilters,
       errorMessage: null,
     };
   } catch (error) {
     console.error("Erro ao buscar listagem de posts no Sanity", error);
     return {
       posts: [],
+      categoryFilters: [],
       errorMessage: BLOG_LOAD_ERROR_MESSAGE,
     };
   }
