@@ -5,6 +5,7 @@ export interface BlogAuthor {
   role: string;
   initials: string;
   bio: string;
+  avatar?: BlogPostHeroImage;
 }
 
 export interface BlogSidebarCta {
@@ -81,6 +82,7 @@ export interface BlogPost {
   seoImage?: string;
   canonicalUrl?: string;
   noIndex?: boolean;
+  coverImage?: BlogPostHeroImage;
   heroImage?: BlogPostHeroImage;
   heroGhostWord?: string;
   lead: string;
