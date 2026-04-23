@@ -115,6 +115,8 @@ const hasToc = tocItems.length > 0;
 const summaryPoints = (currentPost.summaryPoints || []).filter(Boolean);
 const hasHeroImage = Boolean(currentPost.heroImage?.url);
 const heroImageAlt = currentPost.heroImage?.alt || `Imagem do post ${currentPost.title}`;
+const hasAuthorAvatar = Boolean(currentPost.author.avatar?.url);
+const authorAvatarAlt = currentPost.author.avatar?.alt || `Foto de ${currentPost.author.name}`;
 const linkedInShareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(
   Astro.url.href,
 )}`;
@@ -231,7 +233,23 @@ const articleJsonLd = JSON.stringify({
 
         <div class="ah-right">
           <div class="ah-author">
-            <div class="ah-avatar">{currentPost.author.initials}</div>
+            <div class="ah-avatar">
+              {
+                hasAuthorAvatar ? (
+                  <img
+                    class="ah-avatar-image"
+                    src={currentPost.author.avatar?.url}
+                    alt={authorAvatarAlt}
+                    width={currentPost.author.avatar?.width}
+                    height={currentPost.author.avatar?.height}
+                    loading="lazy"
+                    decoding="async"
+                  />
+                ) : (
+                  currentPost.author.initials
+                )
+              }
+            </div>
             <div class="ah-author-info">
               <div class="ah-author-name">{currentPost.author.name}</div>
               <div class="ah-author-role">{currentPost.author.role}</div>
@@ -456,7 +474,23 @@ const articleJsonLd = JSON.stringify({
 
       <div class="author-bio">
         <div class="bio-left">
-          <div class="bio-avatar">{currentPost.author.initials}</div>
+          <div class="bio-avatar">
+            {
+              hasAuthorAvatar ? (
+                <img
+                  class="bio-avatar-image"
+                  src={currentPost.author.avatar?.url}
+                  alt={authorAvatarAlt}
+                  width={currentPost.author.avatar?.width}
+                  height={currentPost.author.avatar?.height}
+                  loading="lazy"
+                  decoding="async"
+                />
+              ) : (
+                currentPost.author.initials
+              )
+            }
+          </div>
           <div>
             <div class="bio-name">{currentPost.author.name}</div>
             <div class="bio-role">{currentPost.author.role}</div>
@@ -861,6 +895,15 @@ const articleJsonLd = JSON.stringify({
     font-weight: 600;
     letter-spacing: 0.04em;
     flex-shrink: 0;
+    overflow: hidden;
+  }
+
+  .ah-avatar-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    display: block;
   }
 
   .ah-author-name {
@@ -1269,6 +1312,7 @@ const articleJsonLd = JSON.stringify({
   .art-sidebar {
     border-left: 1px solid var(--rule);
     padding: 52px 40px;
+    position: -webkit-sticky;
     position: sticky;
     top: 74px;
     align-self: start;
@@ -1462,6 +1506,15 @@ const articleJsonLd = JSON.stringify({
     font-size: 22px;
     font-weight: 600;
     letter-spacing: 0.04em;
+    overflow: hidden;
+  }
+
+  .bio-avatar-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    display: block;
   }
 
   .bio-name {
@@ -1612,6 +1665,10 @@ const articleJsonLd = JSON.stringify({
   }
 
   @media (max-width: 1100px) {
+    .art-hero {
+      height: 320px;
+    }
+
     .art-body-wrap {
       grid-template-columns: 56px minmax(0, 700px) 290px;
     }
@@ -1661,17 +1718,30 @@ const articleJsonLd = JSON.stringify({
 
     .art-prose {
       max-width: 100%;
-      padding: 44px 30px 52px;
+      padding: 42px 28px 48px;
     }
 
     .art-sidebar {
-      position: static;
+      position: sticky;
+      bottom: 0;
+      top: auto;
       border-left: none;
       border-top: 1px solid var(--rule);
-      padding: 36px 30px;
-      max-height: none;
-      overflow: visible;
-      overscroll-behavior: auto;
+      padding: 24px 30px;
+      max-height: min(44vh, 340px);
+      overflow-y: auto;
+      overscroll-behavior: contain;
+      background: var(--cream);
+      box-shadow: 0 -12px 24px rgba(17, 17, 32, 0.06);
+      z-index: 8;
+    }
+
+    .toc-list {
+      margin-bottom: 26px;
+    }
+
+    .sb-cta {
+      margin-bottom: 24px;
     }
 
     .author-bio {
@@ -1735,7 +1805,7 @@ const articleJsonLd = JSON.stringify({
     }
 
     .art-hero {
-      height: 260px;
+      height: 240px;
     }
 
     .art-prose {
@@ -1749,6 +1819,14 @@ const articleJsonLd = JSON.stringify({
     }
 
     .art-sidebar {
+      position: static;
+      top: auto;
+      bottom: auto;
+      z-index: auto;
+      box-shadow: none;
+      max-height: none;
+      overflow: visible;
+      overscroll-behavior: auto;
       padding: 26px 18px;
     }
 
