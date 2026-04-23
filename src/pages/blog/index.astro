@@ -5,14 +5,15 @@ import BlogCard from "../../components/blog/BlogCard.astro";
 import Footer from "../../sections/footer/Footer.astro";
 import { getBlogList } from "../../lib/sanity.blog";
 
-const { posts, errorMessage: blogErrorMessage } = await getBlogList();
+const { posts, categoryFilters, errorMessage: blogErrorMessage } = await getBlogList();
 const featuredPostIndex = posts.findIndex((post) => post.featured);
 const normalizedFeaturedPostIndex = featuredPostIndex >= 0 ? featuredPostIndex : 0;
 const featuredPost = posts[normalizedFeaturedPostIndex];
 const gridPosts = posts.filter((_, index) => index !== normalizedFeaturedPostIndex);
 const hasPosts = posts.length > 0;
-
-const modelCategoryLabels = ["Fluencia", "Carreira", "Vocabulario", "Cultura", "Dicas"];
+const featuredCoverImageAlt = featuredPost
+  ? featuredPost.coverImage?.alt || `Capa do post ${featuredPost.title}`
+  : "Capa do post";
 
 function createCategoryKey(categoryLabel: string): string {
   return categoryLabel
@@ -28,7 +29,10 @@ function createTagKey(tagLabel: string): string {
 }
 
 const categoriesFromPosts = Array.from(new Set(posts.map((post) => post.category)));
-const categoryLabels = Array.from(new Set([...modelCategoryLabels, ...categoriesFromPosts]));
+const categoryLabels =
+  categoryFilters.length > 0
+    ? Array.from(new Set(categoryFilters))
+    : Array.from(new Set(categoriesFromPosts));
 
 const filterPills = [
   {
@@ -136,24 +140,40 @@ const totalCountFormatted = String(posts.length).padStart(3, "0");
             data-category-key={createCategoryKey(featuredPost.category)}
             data-tag-keys={featuredPost.tags.map(createTagKey).join(",")}
           >
-            <div class="feat-illo" aria-hidden="true">
-              <div class="feat-ghost">01</div>
-              <svg viewBox="0 0 280 260" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <rect x="20" y="30" width="160" height="110" rx="14" fill="#2B2BA8"></rect>
-                <path d="M48 140 L36 162 L72 140Z" fill="#2B2BA8"></path>
-                <rect x="32" y="52" width="90" height="8" rx="4" fill="rgba(255,255,255,.35)"></rect>
-                <rect x="32" y="70" width="130" height="6" rx="3" fill="rgba(255,255,255,.2)"></rect>
-                <rect x="32" y="84" width="108" height="6" rx="3" fill="rgba(255,255,255,.2)"></rect>
-                <rect x="32" y="98" width="80" height="6" rx="3" fill="rgba(255,255,255,.15)"></rect>
-                <rect x="98" y="148" width="158" height="90" rx="14" fill="#E8E6DF" stroke="rgba(17,17,32,.1)" stroke-width="1"></rect>
-                <path d="M232 238 L244 256 L212 238Z" fill="#E8E6DF" stroke="rgba(17,17,32,.08)" stroke-width="1"></path>
-                <rect x="112" y="164" width="70" height="7" rx="3.5" fill="rgba(17,17,32,.2)"></rect>
-                <rect x="112" y="180" width="120" height="5" rx="2.5" fill="rgba(17,17,32,.1)"></rect>
-                <rect x="112" y="192" width="96" height="5" rx="2.5" fill="rgba(17,17,32,.1)"></rect>
-                <rect x="112" y="204" width="60" height="5" rx="2.5" fill="rgba(17,17,32,.08)"></rect>
-                <rect x="60" y="220" width="2" height="20" rx="1" fill="#2B2BA8" opacity=".6"></rect>
-                <rect x="20" y="220" width="36" height="5" rx="2.5" fill="rgba(17,17,32,.15)"></rect>
-              </svg>
+            <div class={`feat-illo ${featuredPost.coverImage?.url ? "feat-illo-with-image" : ""}`}>
+              {
+                featuredPost.coverImage?.url ? (
+                  <img
+                    class="feat-cover-image"
+                    src={featuredPost.coverImage.url}
+                    alt={featuredCoverImageAlt}
+                    width={featuredPost.coverImage.width}
+                    height={featuredPost.coverImage.height}
+                    loading="eager"
+                    decoding="async"
+                  />
+                ) : (
+                  <>
+                    <div class="feat-ghost" aria-hidden="true">01</div>
+                    <svg viewBox="0 0 280 260" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                      <rect x="20" y="30" width="160" height="110" rx="14" fill="#2B2BA8"></rect>
+                      <path d="M48 140 L36 162 L72 140Z" fill="#2B2BA8"></path>
+                      <rect x="32" y="52" width="90" height="8" rx="4" fill="rgba(255,255,255,.35)"></rect>
+                      <rect x="32" y="70" width="130" height="6" rx="3" fill="rgba(255,255,255,.2)"></rect>
+                      <rect x="32" y="84" width="108" height="6" rx="3" fill="rgba(255,255,255,.2)"></rect>
+                      <rect x="32" y="98" width="80" height="6" rx="3" fill="rgba(255,255,255,.15)"></rect>
+                      <rect x="98" y="148" width="158" height="90" rx="14" fill="#E8E6DF" stroke="rgba(17,17,32,.1)" stroke-width="1"></rect>
+                      <path d="M232 238 L244 256 L212 238Z" fill="#E8E6DF" stroke="rgba(17,17,32,.08)" stroke-width="1"></path>
+                      <rect x="112" y="164" width="70" height="7" rx="3.5" fill="rgba(17,17,32,.2)"></rect>
+                      <rect x="112" y="180" width="120" height="5" rx="2.5" fill="rgba(17,17,32,.1)"></rect>
+                      <rect x="112" y="192" width="96" height="5" rx="2.5" fill="rgba(17,17,32,.1)"></rect>
+                      <rect x="112" y="204" width="60" height="5" rx="2.5" fill="rgba(17,17,32,.08)"></rect>
+                      <rect x="60" y="220" width="2" height="20" rx="1" fill="#2B2BA8" opacity=".6"></rect>
+                      <rect x="20" y="220" width="36" height="5" rx="2.5" fill="rgba(17,17,32,.15)"></rect>
+                    </svg>
+                  </>
+                )
+              }
             </div>
 
             <div class="feat-vr" aria-hidden="true"></div>
@@ -591,7 +611,7 @@ const totalCountFormatted = String(posts.length).padStart(3, "0");
 
   .featured {
     display: grid;
-    grid-template-columns: 1fr 1px 40%;
+    grid-template-columns: minmax(0, 58%) 1px minmax(0, 42%);
     min-height: 360px;
     border-bottom: 1px solid rgba(17, 17, 32, 0.1);
     animation: fadein 700ms ease both 200ms;
@@ -606,6 +626,19 @@ const totalCountFormatted = String(posts.length).padStart(3, "0");
     justify-content: center;
     padding: 48px;
     background: rgba(17, 17, 32, 0.02);
+  }
+
+  .feat-illo-with-image {
+    padding: 0;
+    background: rgba(17, 17, 32, 0.06);
+  }
+
+  .feat-cover-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    display: block;
   }
 
   .feat-ghost {
@@ -707,7 +740,7 @@ const totalCountFormatted = String(posts.length).padStart(3, "0");
   }
 
   .feat-excerpt {
-    max-width: 520px;
+    max-width: 560px;
     font-size: 14px;
     font-weight: 300;
     line-height: 1.75;
@@ -930,6 +963,41 @@ const totalCountFormatted = String(posts.length).padStart(3, "0");
     }
   }
 
+  @media (max-width: 1200px) {
+    .topbar {
+      padding-left: 44px;
+      padding-right: 44px;
+    }
+
+    .ph-left,
+    .ph-right {
+      padding: 44px;
+    }
+
+    .featured {
+      grid-template-columns: minmax(0, 1fr) 1px minmax(0, 44%);
+    }
+
+    .feat-illo,
+    .feat-body {
+      padding: 42px 44px;
+    }
+
+    .grid-header {
+      padding: 26px 44px;
+    }
+
+    .nl-left,
+    .nl-right {
+      padding: 40px 44px;
+    }
+
+    .articles-empty {
+      padding-left: 44px;
+      padding-right: 44px;
+    }
+  }
+
   @media (max-width: 960px) {
     .topbar {
       padding-left: 36px;
@@ -1029,6 +1097,11 @@ const totalCountFormatted = String(posts.length).padStart(3, "0");
     .feat-body,
     .feat-illo {
       padding: 28px 20px;
+    }
+
+    .feat-title {
+      font-size: clamp(40px, 13vw, 56px);
+      margin-bottom: 16px;
     }
 
     .grid-header {
