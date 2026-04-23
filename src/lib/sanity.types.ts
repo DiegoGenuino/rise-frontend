@@ -3,6 +3,7 @@ export interface SanityAuthor {
   role?: string;
   initials?: string;
   bio?: string;
+  avatar?: SanityHeroImage;
 }
 
 export interface SanityHeroImage {
@@ -192,6 +193,7 @@ export interface SanityPostCardDocument {
   categorySlug?: string;
   publishedAt?: string;
   readingTimeMinutes?: number;
+  coverImage?: SanityHeroImage;
   seoDescription?: string;
   seoImage?: string;
   heroImage?: SanityHeroImage;
@@ -218,5 +220,10 @@ export interface SanityPostDocument extends SanityPostCardDocument {
 }
 
 export interface SanitySlugDocument {
+  slug?: string;
+}
+
+export interface SanityCategoryFilterDocument {
+  title?: string;
   slug?: string;
 }
